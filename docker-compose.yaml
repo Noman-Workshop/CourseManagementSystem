@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  web-debug:
+    network_mode: "host"
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile-Debug
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+  web:
+    network_mode: "host"
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile
+    volumes:
+      - type: bind
+        source: .
+        target: /app

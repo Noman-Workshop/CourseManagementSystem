@@ -1,26 +1,21 @@
-﻿using CourseManagementSystem.Models;
+﻿using System.Diagnostics;
+using CourseManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
-namespace CourseManagementSystem.Controllers {
-    public class HomeController : Controller {
-        private readonly ILogger<HomeController> _logger;
+namespace CourseManagementSystem.Controllers;
 
-        public HomeController(ILogger<HomeController> logger) {
-            _logger = logger;
-        }
+public class HomeController : Controller {
+	private readonly ILogger<HomeController> _logger;
 
-        public IActionResult Index() {
-            return View();
-        }
+	public HomeController(ILogger<HomeController> logger) {
+		_logger = logger;
+	}
 
-        public IActionResult Privacy() {
-            return View();
-        }
+	public IActionResult Index() => View();
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error() {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-    }
+	public IActionResult Privacy() => View();
+
+	[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+	public IActionResult Error() => View(new ErrorViewModel
+		{ RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 }
