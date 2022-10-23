@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Configuration;
+using CourseManagementSystem.Areas.Departments.Models;
+using CourseManagementSystem.Areas.Teachers.Models;
+using CourseManagementSystem.Models;
 
-namespace CourseManagementSystem.Models;
+namespace CourseManagementSystem.Areas.Courses.Models;
 
 public class Course {
 	[Key]

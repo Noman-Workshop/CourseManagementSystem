@@ -1,20 +1,24 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CourseManagementSystem.Areas.Courses.Models;
+using CourseManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace CourseManagementSystem.Models;
+namespace CourseManagementSystem.Areas.Teachers.Models;
 
-public class Admin {
+public class Teacher {
 	[Key]
 	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 	[ValidateNever]
 	public string Id { get; set; }
 
-	[StringLength(10, MinimumLength = 3)]
+	[StringLength(50, MinimumLength = 3)]
 	public string Name { get; set; }
 
 	[EmailAddress]
 	public string Email { get; set; }
 
 	public Address Address { get; set; }
+
+	public virtual ICollection<Course> Courses { get; set; }
 }

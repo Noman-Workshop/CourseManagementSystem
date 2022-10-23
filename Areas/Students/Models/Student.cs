@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using CourseManagementSystem.Models;
 
-namespace CourseManagementSystem.Models;
+namespace CourseManagementSystem.Areas.Students.Models;
 
 public class Student {
 	[Key]
