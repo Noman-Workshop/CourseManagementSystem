@@ -10,6 +10,9 @@ services:
       - type: bind
         source: .
         target: /app
+    depends_on:
+      - db
+
   web:
     network_mode: "host"
     build:
@@ -19,3 +22,18 @@ services:
       - type: bind
         source: .
         target: /app
+    depends_on:
+      - db
+
+  db:
+    network_mode: "host"
+    build:
+      context: .
+      dockerfile: docker/db/Dockerfile
+    volumes:
+      - type: volume
+        source: mssql-data
+        target: /var/opt/mssql
+
+volumes:
+  mssql-data:
