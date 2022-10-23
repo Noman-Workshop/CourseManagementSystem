@@ -4,17 +4,15 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CourseManagementSystem.Models;
 
-public class Admin {
+public class Enrollment {
 	[Key]
 	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 	[ValidateNever]
 	public string Id { get; set; }
 
-	[StringLength(10, MinimumLength = 3)]
-	public string Name { get; set; }
+	public string StudentId { get; set; }
+	public virtual Student Student { get; set; }
 
-	[EmailAddress]
-	public string Email { get; set; }
-
-	public Address Address { get; set; }
+	public string CourseId { get; set; }
+	public virtual Course Course { get; set; }
 }
