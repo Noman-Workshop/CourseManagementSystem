@@ -19,7 +19,7 @@ namespace CourseManagementSystem.Controllers {
 		// GET: Courses/Details/5
 		public async Task<IActionResult> Details(string id) {
 			var course = await _context.Course
-				.FirstOrDefaultAsync(m => m.Id == id);
+							.FirstOrDefaultAsync(m => m.Id == id);
 			if (course == null) {
 				return NotFound();
 			}
@@ -67,8 +67,7 @@ namespace CourseManagementSystem.Controllers {
 				try {
 					_context.Update(course);
 					await _context.SaveChangesAsync();
-				}
-				catch (DbUpdateConcurrencyException) {
+				} catch (DbUpdateConcurrencyException) {
 					if (!CourseExists(course.Id)) {
 						return NotFound();
 					}
@@ -85,7 +84,7 @@ namespace CourseManagementSystem.Controllers {
 		// GET: Courses/Delete/5
 		public async Task<IActionResult> Delete(string id) {
 			var course = await _context.Course
-				.FirstOrDefaultAsync(m => m.Id == id);
+							.FirstOrDefaultAsync(m => m.Id == id);
 			if (course == null) {
 				return NotFound();
 			}
