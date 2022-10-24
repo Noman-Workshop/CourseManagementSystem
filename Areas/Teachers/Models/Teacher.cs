@@ -18,7 +18,9 @@ public class Teacher {
 	[EmailAddress]
 	public string Email { get; set; }
 
-	public Address Address { get; set; }
+	[ValidateNever]
+	public virtual Address Address { get; set; }
 
+	[ValidateNever]
 	public virtual ICollection<Course> Courses { get; set; }
 }

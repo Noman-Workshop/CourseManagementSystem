@@ -1,16 +1,21 @@
 using CourseManagementSystem.Areas.Teachers.Models;
 using CourseManagementSystem.Data;
+using CourseManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using CourseManagementSystem.Areas.Addresses.Services;
+using static Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState;
 
-namespace CourseManagementSystem.Areas.Teachers.Controllers; 
+namespace CourseManagementSystem.Areas.Teachers.Controllers;
 
 [Area("Teachers")]
 public class HomeController : Controller {
 	private readonly CMSDbContext _context;
+	private readonly AddressesServices _addressesService;
 
-	public HomeController(CMSDbContext context) {
+	public HomeController(CMSDbContext context, AddressesServices addressesService) {
 		_context = context;
+		_addressesService = addressesService;
 	}
 
 	// GET: Teachers/Home
@@ -19,7 +24,9 @@ public class HomeController : Controller {
 	// GET: Teachers/Home/Details/5
 	public async Task<IActionResult> Details(string id) {
 		Teacher? teacher = await _context.Teachers
+								.Include(teacher => teacher.Address)
 								.FirstOrDefaultAsync(m => m.Id == id);
+
 		if (teacher == null) {
 			return NotFound();
 		}
@@ -33,7 +40,12 @@ public class HomeController : Controller {
 	// POST: Teachers/Home/Create
 	[HttpPost]
 	[ValidateAntiForgeryToken]
-	public async Task<IActionResult> Create([Bind("Id,Name,Email")] Teacher teacher) {
+	public async Task<IActionResult> Create(
+		[Bind("Id,Name,Email")] Teacher teacher,
+		[Bind("ZipCode,Street,House")] Address address
+	) {
+		address = await _addressesService.CreateAddress(address);
+		teacher.Address = address;
 		if (ModelState.IsValid) {
 			_context.Add(teacher);
 			await _context.SaveChangesAsync();

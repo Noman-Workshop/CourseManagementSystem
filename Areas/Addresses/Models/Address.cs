@@ -18,5 +18,5 @@ public class Address {
 	public string Street { get; set; }
 
 	[StringLength(50, MinimumLength = 3)]
-	public string house { get; set; }
+	public string House { get; set; }
 }

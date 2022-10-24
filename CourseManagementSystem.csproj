@@ -21,16 +21,19 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Areas\Admin\Controllers" />
-      <Folder Include="Areas\Admin\Data" />
-      <Folder Include="Areas\Admin\Views" />
-      <Folder Include="Areas\Courses\Data" />
-      <Folder Include="Areas\Departments\Controllers" />
-      <Folder Include="Areas\Departments\Data" />
-      <Folder Include="Areas\Students\Controllers" />
-      <Folder Include="Areas\Students\Data" />
-      <Folder Include="Areas\Teachers\Controllers" />
-      <Folder Include="Areas\Teachers\Data" />
+        <Folder Include="Areas\Addresses\Controllers" />
+        <Folder Include="Areas\Addresses\Data" />
+        <Folder Include="Areas\Admin\Controllers" />
+        <Folder Include="Areas\Admin\Data" />
+        <Folder Include="Areas\Admin\Views" />
+        <Folder Include="Areas\Courses\Data" />
+        <Folder Include="Areas\Courses\Views\Shared" />
+        <Folder Include="Areas\Departments\Controllers" />
+        <Folder Include="Areas\Departments\Data" />
+        <Folder Include="Areas\Students\Controllers" />
+        <Folder Include="Areas\Students\Data" />
+        <Folder Include="Areas\Teachers\Controllers" />
+        <Folder Include="Areas\Teachers\Data" />
     </ItemGroup>
 
 </Project>

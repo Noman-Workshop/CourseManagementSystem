@@ -23,6 +23,10 @@ public class CMSDbContext : DbContext {
 	protected override void OnModelCreating(ModelBuilder modelBuilder) {
 		modelBuilder.Entity<Department>().HasKey(d => new { d.Id, d.Name });
 		modelBuilder.Entity<Enrollment>().HasKey(e => new { e.CourseId, e.StudentId });
+		SeedData(modelBuilder);
 		base.OnModelCreating(modelBuilder);
+	}
+
+	private void SeedData(ModelBuilder modelBuilder) {
 	}
 }
