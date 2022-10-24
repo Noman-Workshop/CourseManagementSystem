@@ -4,16 +4,15 @@ using CourseManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CourseManagementSystem.Areas.Addresses.Services;
-using static Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState;
 
 namespace CourseManagementSystem.Areas.Teachers.Controllers;
 
 [Area("Teachers")]
 public class HomeController : Controller {
 	private readonly CMSDbContext _context;
-	private readonly AddressesServices _addressesService;
+	private readonly IAddressServices _addressesService;
 
-	public HomeController(CMSDbContext context, AddressesServices addressesService) {
+	public HomeController(CMSDbContext context, IAddressServices addressesService) {
 		_context = context;
 		_addressesService = addressesService;
 	}
@@ -44,7 +43,7 @@ public class HomeController : Controller {
 		[Bind("Id,Name,Email")] Teacher teacher,
 		[Bind("ZipCode,Street,House")] Address address
 	) {
-		address = await _addressesService.CreateAddress(address);
+		address = await _addressesService.Create(address);
 		teacher.Address = address;
 		if (ModelState.IsValid) {
 			_context.Add(teacher);
@@ -57,7 +56,9 @@ public class HomeController : Controller {
 
 	// GET: Teachers/Home/Edit/5
 	public async Task<IActionResult> Edit(string id) {
-		Teacher? teacher = await _context.Teachers.FindAsync(id);
+		Teacher? teacher = await _context.Teachers
+								.Include(teacher => teacher.Address)
+								.FirstOrDefaultAsync(teacher => id == teacher.Id);
 		if (teacher == null) {
 			return NotFound();
 		}
@@ -68,7 +69,11 @@ public class HomeController : Controller {
 	// POST: Teachers/Home/Edit/5
 	[HttpPost]
 	[ValidateAntiForgeryToken]
-	public async Task<IActionResult> Edit(string id, [Bind("Id,Name,Email")] Teacher teacher) {
+	public async Task<IActionResult> Edit(
+		string id,
+		[Bind("Id,Name,Email")] Teacher teacher,
+		[Bind("ZipCode,Street,House")] Address address
+	) {
 		if (id != teacher.Id) {
 			return NotFound();
 		}

@@ -9,7 +9,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<CMSDbContext>(
 	options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<AddressesServices, AddressesServices>();
+builder.Services.AddScoped<IAddressServices, AddressServices>();
 
 WebApplication app = builder.Build();
 

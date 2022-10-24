@@ -5,23 +5,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseManagementSystem.Areas.Addresses.Services;
 
-public class AddressesServices {
+public class AddressServices : IAddressServices {
 	private readonly CMSDbContext _context;
 
-	public AddressesServices(CMSDbContext context) {
+	public AddressServices(CMSDbContext context) {
 		_context = context;
 	}
 
-	public async Task<List<Address?>> GetAddresses() {
-		return await _context.Addresses.ToListAsync();
-	}
+	public async Task<List<Address>> GetAll() => await _context.Addresses.ToListAsync();
 
-	public async Task<Address?> GetAddress(string id) {
-		return await _context.Addresses.FindAsync(id);
-	}
+	public async Task<Address> GetById(string id) =>
+		await _context.Addresses.FindAsync(id) ?? throw new ArgumentException();
 
-	public async Task<Address> CreateAddress(Address address) {
-		var isValid = Validator.TryValidateObject(address, new ValidationContext(address), null, true);
+	public async Task<Address> Create(Address address) {
+		bool isValid = Validator.TryValidateObject(address, new ValidationContext(address), null, true);
 		if (!isValid) {
 			throw new ArgumentException();
 		}
@@ -31,10 +28,10 @@ public class AddressesServices {
 		return address;
 	}
 
-	public async Task<Address?> UpdateAddress(int id, Address address) {
-		var isValid = Validator.TryValidateObject(address, new ValidationContext(address), null, true);
+	public async Task<Address> Update(Address address) {
+		bool isValid = Validator.TryValidateObject(address, new ValidationContext(address), null, true);
 		if (!isValid) {
-			return null;
+			throw new ArgumentException();
 		}
 
 		_context.Entry(address).State = EntityState.Modified;
@@ -42,13 +39,11 @@ public class AddressesServices {
 		return address;
 	}
 
-	public async void DeleteAddress(int id) {
-		var address = await _context.Addresses.FindAsync(id);
-		if (address == null) {
-			return;
-		}
-
+	public async Task Delete(string id) {
+		Address address = await GetById(id);
 		_context.Addresses.Remove(address);
 		await _context.SaveChangesAsync();
 	}
+
+	public bool Exists(string id) => _context.Addresses.Any(e => e.Id == id);
 }
