@@ -1,36 +1,32 @@
+using CourseManagementSystem.Areas.Addresses.Models;
 using CourseManagementSystem.Areas.Teachers.Models;
-using CourseManagementSystem.Data;
-using CourseManagementSystem.Models;
+using CourseManagementSystem.Areas.Teachers.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using CourseManagementSystem.Areas.Addresses.Services;
 
 namespace CourseManagementSystem.Areas.Teachers.Controllers;
 
 [Area("Teachers")]
 public class HomeController : Controller {
-	private readonly CMSDbContext _context;
-	private readonly IAddressServices _addressesService;
+	private readonly ITeacherService _teacherService;
 
-	public HomeController(CMSDbContext context, IAddressServices addressesService) {
-		_context = context;
-		_addressesService = addressesService;
+	public HomeController(ITeacherService teacherService) {
+		_teacherService = teacherService;
 	}
 
 	// GET: Teachers/Home
-	public async Task<IActionResult> Index() => View(await _context.Teachers.ToListAsync());
+	public async Task<IActionResult> Index() => View(await _teacherService.Find());
 
 	// GET: Teachers/Home/Details/5
 	public async Task<IActionResult> Details(string id) {
-		Teacher? teacher = await _context.Teachers
-								.Include(teacher => teacher.Address)
-								.FirstOrDefaultAsync(m => m.Id == id);
+		List<Teacher> teachers = await _teacherService.Find(teacher => teacher.Id == id, "Address");
 
-		if (teacher == null) {
-			return NotFound();
+		if (teachers.Count == 0) {
+			throw new ArgumentException();
 		}
 
-		return View(teacher);
+		return View(teachers[0]);
 	}
 
 	// GET: Teachers/Home/Create
@@ -43,11 +39,9 @@ public class HomeController : Controller {
 		[Bind("Id,Name,Email")] Teacher teacher,
 		[Bind("ZipCode,Street,House")] Address address
 	) {
-		address = await _addressesService.Create(address);
 		teacher.Address = address;
 		if (ModelState.IsValid) {
-			_context.Add(teacher);
-			await _context.SaveChangesAsync();
+			await _teacherService.Add(teacher);
 			return RedirectToAction(nameof(Index));
 		}
 
@@ -56,14 +50,12 @@ public class HomeController : Controller {
 
 	// GET: Teachers/Home/Edit/5
 	public async Task<IActionResult> Edit(string id) {
-		Teacher? teacher = await _context.Teachers
-								.Include(teacher => teacher.Address)
-								.FirstOrDefaultAsync(teacher => id == teacher.Id);
-		if (teacher == null) {
+		List<Teacher> teachers = await _teacherService.Find(teacher => teacher.Id == id, "Address");
+		if (teachers.Count == 0) {
 			return NotFound();
 		}
 
-		return View(teacher);
+		return View(teachers[0]);
 	}
 
 	// POST: Teachers/Home/Edit/5
@@ -72,18 +64,18 @@ public class HomeController : Controller {
 	public async Task<IActionResult> Edit(
 		string id,
 		[Bind("Id,Name,Email")] Teacher teacher,
-		[Bind("ZipCode,Street,House")] Address address
+		[Bind(Prefix = "Address")] Address address
 	) {
 		if (id != teacher.Id) {
 			return NotFound();
 		}
 
+		teacher.Address = address;
 		if (ModelState.IsValid) {
 			try {
-				_context.Update(teacher);
-				await _context.SaveChangesAsync();
+				await _teacherService.Update(teacher);
 			} catch (DbUpdateConcurrencyException) {
-				if (!TeacherExists(teacher.Id)) {
+				if (!await _teacherService.Exists(teacher.Id)) {
 					return NotFound();
 				}
 
@@ -94,17 +86,17 @@ public class HomeController : Controller {
 		}
 
 		return View(teacher);
+		return NotFound();
 	}
 
 	// GET: Teachers/Home/Delete/5
 	public async Task<IActionResult> Delete(string id) {
-		Teacher? teacher = await _context.Teachers
-								.FirstOrDefaultAsync(m => m.Id == id);
-		if (teacher == null) {
+		List<Teacher> teachers = await _teacherService.Find(teacher => teacher.Id == id, "Address");
+		if (teachers.Count == 0) {
 			return NotFound();
 		}
 
-		return View(teacher);
+		return View(teachers[0]);
 	}
 
 	// POST: Teachers/Home/Delete/5
@@ -112,14 +104,8 @@ public class HomeController : Controller {
 	[ActionName("Delete")]
 	[ValidateAntiForgeryToken]
 	public async Task<IActionResult> DeleteConfirmed(string id) {
-		Teacher? teacher = await _context.Teachers.FindAsync(id);
-		if (teacher != null) {
-			_context.Teachers.Remove(teacher);
-		}
-
-		await _context.SaveChangesAsync();
+		Teacher teacher = (await _teacherService.Find(teacher => teacher.Id == id, "Address"))[0];
+		await _teacherService.Delete(teacher);
 		return RedirectToAction(nameof(Index));
 	}
-
-	private bool TeacherExists(string id) => _context.Teachers.Any(e => e.Id == id);
 }

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CourseManagementSystem.Areas.Addresses.Models;
 using CourseManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 

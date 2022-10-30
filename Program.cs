@@ -1,19 +1,13 @@
-using CourseManagementSystem.Areas.Addresses.Services;
-using CourseManagementSystem.Data;
-using Microsoft.EntityFrameworkCore;
+using CourseManagementSystem.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<CMSDbContext>(
-	options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddScoped<IAddressServices, AddressServices>();
+builder.Services.AddDbService(builder.Configuration);
+builder.Services.AddApplicationServices(builder.Configuration);
 
 WebApplication app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment()) {
 	app.UseExceptionHandler("/Home/Error");
 }

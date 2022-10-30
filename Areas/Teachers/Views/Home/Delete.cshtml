@@ -24,6 +24,7 @@
             @Html.DisplayFor(model => model.Email)
         </dd>
     </dl>
+    <partial name="~/Areas/Addresses/Views/Shared/_Details.cshtml" for="Address"/>
 
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id"/>

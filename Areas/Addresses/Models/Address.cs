@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace CourseManagementSystem.Models;
+namespace CourseManagementSystem.Areas.Addresses.Models;
 
 public class Address {
 	[Key]

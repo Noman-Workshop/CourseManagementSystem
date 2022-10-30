@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CourseManagementSystem.Areas.Addresses.Models;
 using CourseManagementSystem.Areas.Courses.Models;
-using CourseManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CourseManagementSystem.Areas.Teachers.Models;
@@ -19,7 +19,7 @@ public class Teacher {
 	public string Email { get; set; }
 
 	[ValidateNever]
-	public virtual Address Address { get; set; }
+	public Address Address { get; set; }
 
 	[ValidateNever]
 	public virtual ICollection<Course> Courses { get; set; }

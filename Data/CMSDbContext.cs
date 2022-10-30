@@ -1,3 +1,4 @@
+using CourseManagementSystem.Areas.Addresses.Models;
 using CourseManagementSystem.Areas.Courses.Models;
 using CourseManagementSystem.Areas.Departments.Models;
 using Microsoft.EntityFrameworkCore;
@@ -21,10 +22,10 @@ public class CMSDbContext : DbContext {
 	public DbSet<Enrollment> Enrollments { get; set; }
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder) {
+		base.OnModelCreating(modelBuilder);
 		modelBuilder.Entity<Department>().HasKey(d => new { d.Id, d.Name });
 		modelBuilder.Entity<Enrollment>().HasKey(e => new { e.CourseId, e.StudentId });
 		SeedData(modelBuilder);
-		base.OnModelCreating(modelBuilder);
 	}
 
 	private void SeedData(ModelBuilder modelBuilder) {

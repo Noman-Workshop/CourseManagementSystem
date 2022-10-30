@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using CourseManagementSystem.Areas.Addresses.Models;
 using CourseManagementSystem.Models;
 
 namespace CourseManagementSystem.Areas.Students.Models;

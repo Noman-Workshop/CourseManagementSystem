@@ -2,11 +2,12 @@ using System.Linq.Expressions;
 
 namespace CourseManagementSystem.Data;
 
-public interface IRepository<T> {
-	Task<List<T>> FindAll();
-	ValueTask<T?> FindById(int id);
-	IQueryable<T> Find(Expression<Func<T, bool>> predicate);
-	void Add(T entity);
-	void Update(T entity);
-	void Remove(T entity);
+public interface IRepository<TEntity, TKey> {
+	Task<List<TEntity>> Find();
+	ValueTask<TEntity?> Find(TKey id);
+	Task<List<TEntity>> Find(Expression<Func<TEntity, bool>> condition, string? includeAttributes = null);
+	Task<TEntity> FindFirst(Expression<Func<TEntity, bool>> condition, string? includeAttributes = null);
+	void Add(TEntity entity);
+	void Update(TEntity entity);
+	void Remove(TEntity entity);
 }
