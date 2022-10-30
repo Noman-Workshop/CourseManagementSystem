@@ -86,7 +86,6 @@ public class HomeController : Controller {
 		}
 
 		return View(teacher);
-		return NotFound();
 	}
 
 	// GET: Teachers/Home/Delete/5

@@ -5,16 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseManagementSystem.Areas.Teachers.UnitOfWorks;
 
-public class TeacherUnitOfWork : UnitOfWork, ITeacherUnitOfWork {
+public class TeacherUnitOfWork : ITeacherUnitOfWork {
 	public TeacherUnitOfWork(
 		DbContext context,
 		ITeacherRepository teacherRepository,
 		IAddressRepository addressRepository
-	) : base(context) {
-		TeacherRepository = teacherRepository;
-		AddressRepository = addressRepository;
+	) : base(context, teacherRepository, addressRepository) {
 	}
-
-	public ITeacherRepository TeacherRepository { get; }
-	public IAddressRepository AddressRepository { get; }
 }

@@ -19,7 +19,7 @@ public class Teacher {
 	public string Email { get; set; }
 
 	[ValidateNever]
-	public Address Address { get; set; }
+	public virtual Address Address { get; set; }
 
 	[ValidateNever]
 	public virtual ICollection<Course> Courses { get; set; }
