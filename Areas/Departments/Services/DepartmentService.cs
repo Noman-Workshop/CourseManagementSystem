@@ -16,6 +16,14 @@ public class DepartmentService : IDepartmentService {
 	public async ValueTask<Department> Find(string id) =>
 		await _departmentRepository.Find(id) ?? throw new ArgumentException();
 
+	public async Task<Department> Find(string id, string name) {
+		var department =
+			await _departmentRepository.FindFirst(
+				department => department.Id == id && department.Name == name,
+				"Head");
+		return department ?? throw new ArgumentException();
+	}
+
 	public Task<List<Department>> Find(Expression<Func<Department, bool>> condition, string includeAttributes) =>
 		_departmentRepository.Find(condition, includeAttributes);
 
