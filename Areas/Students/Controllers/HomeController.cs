@@ -1,30 +1,31 @@
+using CourseManagementSystem.Areas.Addresses.Models;
 using CourseManagementSystem.Areas.Students.Models;
-using CourseManagementSystem.Data;
+using CourseManagementSystem.Areas.Students.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseManagementSystem.Areas.Students.Controllers; 
+namespace CourseManagementSystem.Areas.Students.Controllers;
 
 [Area("Students")]
 public class HomeController : Controller {
-	private readonly CMSDbContext _context;
+	private readonly IStudentService _studentService;
 
-	public HomeController(CMSDbContext context) {
-		_context = context;
+	public HomeController(IStudentService studentService) {
+		_studentService = studentService;
 	}
 
 	// GET: Students/Home
-	public async Task<IActionResult> Index() => View(await _context.Students.ToListAsync());
+	public async Task<IActionResult> Index() => View(await _studentService.Find());
 
 	// GET: Students/Home/Details/5
 	public async Task<IActionResult> Details(string id) {
-		Student? student = await _context.Students
-								.FirstOrDefaultAsync(m => m.Id == id);
-		if (student == null) {
-			return NotFound();
+		List<Student> students = await _studentService.Find(student => student.Id == id, "Address");
+
+		if (students.Count == 0) {
+			throw new ArgumentException();
 		}
 
-		return View(student);
+		return View(students[0]);
 	}
 
 	// GET: Students/Home/Create
@@ -33,10 +34,13 @@ public class HomeController : Controller {
 	// POST: Students/Home/Create
 	[HttpPost]
 	[ValidateAntiForgeryToken]
-	public async Task<IActionResult> Create([Bind("Id,Name,Email")] Student student) {
+	public async Task<IActionResult> Create(
+		[Bind("Id,Name,Email")] Student student,
+		[Bind("ZipCode,Street,House")] Address address
+	) {
+		student.Address = address;
 		if (ModelState.IsValid) {
-			_context.Add(student);
-			await _context.SaveChangesAsync();
+			await _studentService.Add(student);
 			return RedirectToAction(nameof(Index));
 		}
 
@@ -45,28 +49,32 @@ public class HomeController : Controller {
 
 	// GET: Students/Home/Edit/5
 	public async Task<IActionResult> Edit(string id) {
-		Student? student = await _context.Students.FindAsync(id);
-		if (student == null) {
+		List<Student> students = await _studentService.Find(student => student.Id == id, "Address");
+		if (students.Count == 0) {
 			return NotFound();
 		}
 
-		return View(student);
+		return View(students[0]);
 	}
 
 	// POST: Students/Home/Edit/5
 	[HttpPost]
 	[ValidateAntiForgeryToken]
-	public async Task<IActionResult> Edit(string id, [Bind("Id,Name,Email")] Student student) {
+	public async Task<IActionResult> Edit(
+		string id,
+		[Bind("Id,Name,Email")] Student student,
+		[Bind(Prefix = "Address")] Address address
+	) {
 		if (id != student.Id) {
 			return NotFound();
 		}
 
+		student.Address = address;
 		if (ModelState.IsValid) {
 			try {
-				_context.Update(student);
-				await _context.SaveChangesAsync();
+				await _studentService.Update(student);
 			} catch (DbUpdateConcurrencyException) {
-				if (!StudentExists(student.Id)) {
+				if (!await _studentService.Exists(student.Id)) {
 					return NotFound();
 				}
 
@@ -81,13 +89,12 @@ public class HomeController : Controller {
 
 	// GET: Students/Home/Delete/5
 	public async Task<IActionResult> Delete(string id) {
-		Student? student = await _context.Students
-								.FirstOrDefaultAsync(m => m.Id == id);
-		if (student == null) {
+		List<Student> students = await _studentService.Find(student => student.Id == id, "Address");
+		if (students.Count == 0) {
 			return NotFound();
 		}
 
-		return View(student);
+		return View(students[0]);
 	}
 
 	// POST: Students/Home/Delete/5
@@ -95,14 +102,8 @@ public class HomeController : Controller {
 	[ActionName("Delete")]
 	[ValidateAntiForgeryToken]
 	public async Task<IActionResult> DeleteConfirmed(string id) {
-		Student? student = await _context.Students.FindAsync(id);
-		if (student != null) {
-			_context.Students.Remove(student);
-		}
-
-		await _context.SaveChangesAsync();
+		Student student = (await _studentService.Find(student => student.Id == id, "Address"))[0];
+		await _studentService.Delete(student);
 		return RedirectToAction(nameof(Index));
 	}
-
-	private bool StudentExists(string id) => _context.Students.Any(e => e.Id == id);
 }

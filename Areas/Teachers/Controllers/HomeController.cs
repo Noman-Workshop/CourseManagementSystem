@@ -1,8 +1,8 @@
 using CourseManagementSystem.Areas.Addresses.Models;
 using CourseManagementSystem.Areas.Teachers.Models;
 using CourseManagementSystem.Areas.Teachers.Services;
+using CourseManagementSystem.Models.Table;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseManagementSystem.Areas.Teachers.Controllers;
@@ -17,6 +17,20 @@ public class HomeController : Controller {
 
 	// GET: Teachers/Home
 	public async Task<IActionResult> Index() => View(await _teacherService.Find());
+
+	// GET: Teachers/Home
+	[Route("Teachers/GetTableData")]
+	public async Task<IActionResult> GetTableData(JqueryDatatableParam param) {
+		var teachers = await _teacherService.Find(param);
+		var result = new {
+			sEcho = param.sEcho,
+			iTotalRecords = teachers.totalRecords,
+			iTotalDisplayRecords = teachers.totalRecords,
+			aaData = teachers.data
+		};
+
+		return Json(result);
+	}
 
 	// GET: Teachers/Home/Details/5
 	public async Task<IActionResult> Details(string id) {

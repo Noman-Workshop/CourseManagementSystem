@@ -1,6 +1,4 @@
 using System.Linq.Expressions;
-using System.Reflection;
-using CourseManagementSystem.Areas.Teachers.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseManagementSystem.Data;
@@ -29,6 +27,7 @@ public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey> whe
 		return query.Where(condition).ToListAsync();
 	}
 
+	// find all entities with paging
 	public async Task<TEntity> FindFirst(Expression<Func<TEntity, bool>> condition, string? includeAttributes = null) {
 		List<TEntity> entities = await Find(condition, includeAttributes);
 		if (entities.Count == 0) {
@@ -43,4 +42,6 @@ public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey> whe
 	public void Update(TEntity entity) => _context.Set<TEntity>().Update(entity);
 
 	public void Remove(TEntity entity) => _context.Set<TEntity>().Remove(entity);
+
+	public async Task CommitAsync() => await _context.SaveChangesAsync();
 }

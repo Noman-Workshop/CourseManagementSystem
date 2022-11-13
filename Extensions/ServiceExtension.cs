@@ -1,4 +1,6 @@
 using CourseManagementSystem.Areas.Addresses.Repository;
+using CourseManagementSystem.Areas.Departments.Repositories;
+using CourseManagementSystem.Areas.Departments.Services;
 using CourseManagementSystem.Areas.Students.Repositories;
 using CourseManagementSystem.Areas.Students.Services;
 using CourseManagementSystem.Areas.Students.UnitOfWorks;
@@ -22,5 +24,9 @@ public static class ApplicationServiceExtensions {
 			.AddScoped<IStudentRepository, StudentRepository>()
 			.AddScoped<IStudentUnitOfWork, StudentUnitOfWork>()
 			.AddScoped<IStudentService, StudentService>();
+
+		services
+			.AddScoped<IDepartmentRepository, DepartmentRepository>()
+			.AddScoped<IDepartmentService, DepartmentService>();
 	}
 }

@@ -23,6 +23,8 @@
                 <input asp-for="Email" class="form-control"/>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
+            <br>
+            <partial name="~/Areas/Addresses/Views/Shared/_Edit.cshtml" for="Address"/>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary"/>
             </div>

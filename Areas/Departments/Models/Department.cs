@@ -17,5 +17,7 @@ public class Department {
 	public string Name { get; set; }
 
 	public Teacher Head { get; set; }
+
+	[ValidateNever]
 	public virtual ICollection<Course> Courses { get; set; }
 }
