@@ -24,6 +24,7 @@ public class CMSDbContext : DbContext {
 	protected override void OnModelCreating(ModelBuilder modelBuilder) {
 		base.OnModelCreating(modelBuilder);
 		modelBuilder.Entity<Department>().HasKey(d => new { d.Id, d.Name });
+		modelBuilder.Entity<Department>().HasIndex((department => department.Name)).IsUnique();
 		modelBuilder.Entity<Enrollment>().HasKey(e => new { e.CourseId, e.StudentId });
 		SeedData(modelBuilder);
 	}

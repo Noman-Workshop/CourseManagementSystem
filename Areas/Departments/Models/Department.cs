@@ -12,6 +12,7 @@ public class Department {
 	[ValidateNever]
 	public string Id { get; set; }
 
+	// unique key for the department
 	[Key]
 	[StringLength(10, MinimumLength = 3)]
 	public string Name { get; set; }

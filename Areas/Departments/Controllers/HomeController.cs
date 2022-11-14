@@ -1,5 +1,6 @@
 using CourseManagementSystem.Areas.Departments.Models;
 using CourseManagementSystem.Areas.Departments.Services;
+using CourseManagementSystem.Areas.Teachers.Models;
 using CourseManagementSystem.Areas.Teachers.Services;
 using CourseManagementSystem.Models.Table;
 using Microsoft.AspNetCore.Mvc;
@@ -35,14 +36,19 @@ public class HomeController : Controller {
 	[HttpPost]
 	[ValidateAntiForgeryToken]
 	public async Task<IActionResult> Create([Bind("Id,Name,Head")] Department department) {
-		if (ModelState.IsValid) {
-			var head = (await _teacherService.Find((teacher => teacher.Id == department.Head.Id), "Address"))[0];
+		if (!ModelState.IsValid) {
+			return View(department);
+		}
+
+		try {
+			Teacher head = (await _teacherService.Find((teacher => teacher.Id == department.Head.Id), "Address"))[0];
 			department.Head = head;
 			await _departmentService.Add(department);
 			return RedirectToAction(nameof(Index));
+		} catch (Exception) {
+			ModelState["Name"]?.Errors.Add('"' + department.Name + '"' + " already exists");
+			return View(department);
 		}
-
-		return View(department);
 	}
 
 	// GET: Departments/Department/Edit/5
@@ -63,8 +69,8 @@ public class HomeController : Controller {
 	}
 
 	// GET: Departments/Department/Delete/5
-	public async Task<IActionResult> Delete(string id) {
-		Department department = await _departmentService.Find(id);
+	public async Task<IActionResult> Delete(string id, string name) {
+		Department department = await _departmentService.Find(id, name);
 		return View(department);
 	}
 
@@ -72,16 +78,15 @@ public class HomeController : Controller {
 	[HttpPost]
 	[ActionName("Delete")]
 	[ValidateAntiForgeryToken]
-	public async Task<IActionResult> DeleteConfirmed(string id) {
-		Department department = await _departmentService.Find(id);
+	public async Task<IActionResult> DeleteConfirmed(string id, string name) {
+		Department department = await _departmentService.Find(id, name);
 		await _departmentService.Delete(department);
 		return RedirectToAction(nameof(Index));
 	}
 
 	[HttpGet]
-	[ActionName("SearchTeachers")]
 	public async Task<IActionResult> SearchTeachers(string term) {
-		var teachers = await _teacherService.Find(new JqueryDatatableParam() {
+		PagedResponse<Teacher> teachers = await _teacherService.Find(new JqueryDatatableParam {
 			sSearch = term,
 			iDisplayLength = 10
 		});
