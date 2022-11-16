@@ -30,6 +30,7 @@
         <Folder Include="Areas\Courses\Views\Shared" />
         <Folder Include="Areas\Departments\Controllers" />
         <Folder Include="Areas\Teachers\Controllers" />
+        <Folder Include="Areas\Users\Services" />
     </ItemGroup>
 
 </Project>

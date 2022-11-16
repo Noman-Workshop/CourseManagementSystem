@@ -3,6 +3,7 @@ using CourseManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseManagementSystem.Migrations
 {
     [DbContext(typeof(CMSDbContext))]
-    partial class CMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221116202227_IdentityRoles")]
+    partial class IdentityRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,30 +48,7 @@ namespace CourseManagementSystem.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("CourseManagementSystem.Areas.Auth.Models.Role", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("UserEmail")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id", "Name");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.HasIndex("UserEmail");
-
-                    b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("CourseManagementSystem.Areas.Auth.Models.User", b =>
+            modelBuilder.Entity("CourseManagementSystem.Areas.Auth.Models.Identity", b =>
                 {
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(450)");
@@ -80,7 +59,30 @@ namespace CourseManagementSystem.Migrations
 
                     b.HasKey("Email");
 
-                    b.ToTable("Users");
+                    b.ToTable("Identities");
+                });
+
+            modelBuilder.Entity("CourseManagementSystem.Areas.Auth.Models.Role", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("IdentityEmail")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id", "Name");
+
+                    b.HasIndex("IdentityEmail");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("CourseManagementSystem.Areas.Courses.Models.Course", b =>
@@ -231,9 +233,9 @@ namespace CourseManagementSystem.Migrations
 
             modelBuilder.Entity("CourseManagementSystem.Areas.Auth.Models.Role", b =>
                 {
-                    b.HasOne("CourseManagementSystem.Areas.Auth.Models.User", null)
-                        .WithMany("Roles")
-                        .HasForeignKey("UserEmail");
+                    b.HasOne("CourseManagementSystem.Areas.Auth.Models.Identity", null)
+                        .WithMany("roles")
+                        .HasForeignKey("IdentityEmail");
                 });
 
             modelBuilder.Entity("CourseManagementSystem.Areas.Courses.Models.Course", b =>
@@ -312,9 +314,9 @@ namespace CourseManagementSystem.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CourseManagementSystem.Areas.Auth.Models.User", b =>
+            modelBuilder.Entity("CourseManagementSystem.Areas.Auth.Models.Identity", b =>
                 {
-                    b.Navigation("Roles");
+                    b.Navigation("roles");
                 });
 
             modelBuilder.Entity("CourseManagementSystem.Areas.Courses.Models.Course", b =>

@@ -2,11 +2,13 @@ using CourseManagementSystem.Areas.Addresses.Models;
 using CourseManagementSystem.Areas.Teachers.Models;
 using CourseManagementSystem.Areas.Teachers.Services;
 using CourseManagementSystem.Models.Table;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseManagementSystem.Areas.Teachers.Controllers;
 
+[Authorize]
 [Area("Teachers")]
 public class HomeController : Controller {
 	private readonly ITeacherService _teacherService;

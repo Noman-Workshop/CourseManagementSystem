@@ -5,6 +5,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbService(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddAuthServices(builder.Configuration);
 
 WebApplication app = builder.Build();
 
@@ -16,6 +17,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
