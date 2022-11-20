@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{dataTables.bootstrap, datatables, jquery, jquery.dataTables, pdfmake, select2}" />
+    <file url="PROJECT" libraries="{dataTables.bootstrap, datatables, jeditable.js, jquery, jquery.dataTables, pdfmake, select2}" />
   </component>
 </project>

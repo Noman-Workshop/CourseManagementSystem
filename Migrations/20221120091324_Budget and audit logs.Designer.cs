@@ -4,6 +4,7 @@ using CourseManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseManagementSystem.Migrations
 {
     [DbContext(typeof(CMSDbContext))]
-    partial class CMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221120091324_Budget and audit logs")]
+    partial class Budgetandauditlogs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,13 +83,10 @@ namespace CourseManagementSystem.Migrations
 
                     b.HasKey("Email");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CourseManagementSystem.Areas.Budgets.Models.Budget", b =>
+            modelBuilder.Entity("CourseManagementSystem.Areas.Budget.Models.Budget", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,6 +94,10 @@ namespace CourseManagementSystem.Migrations
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("AuditLogId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Currency")
                         .IsRequired()
@@ -120,43 +123,11 @@ namespace CourseManagementSystem.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuditLogId");
+
                     b.HasIndex("DepartmentId", "DepartmentName");
 
                     b.ToTable("Budgets");
-                });
-
-            modelBuilder.Entity("CourseManagementSystem.Areas.Budgets.Models.BudgetAuditLog", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BudgetId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedByEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedByEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BudgetId");
-
-                    b.HasIndex("CreatedByEmail");
-
-                    b.HasIndex("UpdatedByEmail");
-
-                    b.ToTable("BudgetAuditLogs");
                 });
 
             modelBuilder.Entity("CourseManagementSystem.Areas.Courses.Models.Course", b =>
@@ -268,6 +239,31 @@ namespace CourseManagementSystem.Migrations
                     b.ToTable("Teachers");
                 });
 
+            modelBuilder.Entity("CourseManagementSystem.Models.AuditLog", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditLogs");
+                });
+
             modelBuilder.Entity("CourseManagementSystem.Models.Enrollment", b =>
                 {
                     b.Property<string>("CourseId")
@@ -312,38 +308,23 @@ namespace CourseManagementSystem.Migrations
                         .HasForeignKey("UserEmail");
                 });
 
-            modelBuilder.Entity("CourseManagementSystem.Areas.Budgets.Models.Budget", b =>
+            modelBuilder.Entity("CourseManagementSystem.Areas.Budget.Models.Budget", b =>
                 {
+                    b.HasOne("CourseManagementSystem.Models.AuditLog", "AuditLog")
+                        .WithMany()
+                        .HasForeignKey("AuditLogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CourseManagementSystem.Areas.Departments.Models.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId", "DepartmentName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("AuditLog");
+
                     b.Navigation("Department");
-                });
-
-            modelBuilder.Entity("CourseManagementSystem.Areas.Budgets.Models.BudgetAuditLog", b =>
-                {
-                    b.HasOne("CourseManagementSystem.Areas.Budgets.Models.Budget", null)
-                        .WithMany("AuditLogs")
-                        .HasForeignKey("BudgetId");
-
-                    b.HasOne("CourseManagementSystem.Areas.Auth.Models.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedByEmail")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("CourseManagementSystem.Areas.Auth.Models.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedByEmail")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("CourseManagementSystem.Areas.Courses.Models.Course", b =>
@@ -425,11 +406,6 @@ namespace CourseManagementSystem.Migrations
             modelBuilder.Entity("CourseManagementSystem.Areas.Auth.Models.User", b =>
                 {
                     b.Navigation("Roles");
-                });
-
-            modelBuilder.Entity("CourseManagementSystem.Areas.Budgets.Models.Budget", b =>
-                {
-                    b.Navigation("AuditLogs");
                 });
 
             modelBuilder.Entity("CourseManagementSystem.Areas.Courses.Models.Course", b =>
