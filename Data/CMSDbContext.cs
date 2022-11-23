@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using CourseManagementSystem.Models;
 using CourseManagementSystem.Areas.Students.Models;
 using CourseManagementSystem.Areas.Teachers.Models;
+using CourseManagementSystem.Areas.Users.Models;
 
 namespace CourseManagementSystem.Data;
 
@@ -35,17 +36,11 @@ public class CMSDbContext : DbContext {
 			.WithMany()
 			.OnDelete(DeleteBehavior.NoAction);
 
-		modelBuilder.Entity<BudgetAuditLog>()
-			.HasOne(log => log.UpdatedBy)
-			.WithMany()
-			.OnDelete(DeleteBehavior.NoAction);
-
 		modelBuilder.Entity<Department>().HasKey(department => new { department.Id, department.Name });
 		modelBuilder.Entity<Department>().HasIndex(department => department.Name).IsUnique();
 
 		modelBuilder.Entity<Enrollment>().HasKey(enrollment => new { enrollment.CourseId, enrollment.StudentId });
 
-		modelBuilder.Entity<Role>().HasKey(role => new { role.Id, role.Name });
 		modelBuilder.Entity<Role>().HasIndex(role => role.Name).IsUnique();
 
 		SeedData(modelBuilder);

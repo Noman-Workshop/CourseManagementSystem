@@ -39,6 +39,8 @@ public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey> whe
 
 	public void Add(TEntity entity) => _context.Set<TEntity>().AddAsync(entity);
 
+	public void AddRange(IEnumerable<TEntity> entities) => _context.Set<TEntity>().AddRangeAsync(entities);
+
 	public void Update(TEntity entity) => _context.Set<TEntity>().Update(entity);
 
 	public void Remove(TEntity entity) => _context.Set<TEntity>().Remove(entity);

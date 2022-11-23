@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CourseManagementSystem.Areas.Auth.Models;
+using CourseManagementSystem.Areas.Users.Models;
 
 namespace CourseManagementSystem.Areas.Budgets.Models;
 
@@ -13,12 +13,8 @@ public class BudgetAuditLog {
 	public DateTime CreatedAt { get; set; }
 
 	[Required]
-	public DateTime UpdatedAt { get; set; }
-
-	[Required]
 	public User CreatedBy { get; set; }
 
 	[Required]
-	public User UpdatedBy { get; set; }
-
+	public Budget Budget { get; set; }
 }

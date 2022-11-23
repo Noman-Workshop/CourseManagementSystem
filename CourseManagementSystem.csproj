@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="ClosedXML" Version="0.97.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.10" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.10" />
@@ -30,7 +31,10 @@
         <Folder Include="Areas\Courses\Views\Shared" />
         <Folder Include="Areas\Departments\Controllers" />
         <Folder Include="Areas\Teachers\Controllers" />
-        <Folder Include="Areas\Users\Services" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\js\Areas\Budgets\editBudget.js" />
     </ItemGroup>
 
 </Project>

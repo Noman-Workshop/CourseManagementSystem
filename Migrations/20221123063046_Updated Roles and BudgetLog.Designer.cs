@@ -4,6 +4,7 @@ using CourseManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseManagementSystem.Migrations
 {
     [DbContext(typeof(CMSDbContext))]
-    partial class CMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221123063046_Updated Roles and BudgetLog")]
+    partial class UpdatedRolesandBudgetLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,7 +113,6 @@ namespace CourseManagementSystem.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BudgetId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -321,19 +322,15 @@ namespace CourseManagementSystem.Migrations
 
             modelBuilder.Entity("CourseManagementSystem.Areas.Budgets.Models.BudgetAuditLog", b =>
                 {
-                    b.HasOne("CourseManagementSystem.Areas.Budgets.Models.Budget", "Budget")
+                    b.HasOne("CourseManagementSystem.Areas.Budgets.Models.Budget", null)
                         .WithMany("AuditLogs")
-                        .HasForeignKey("BudgetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BudgetId");
 
                     b.HasOne("CourseManagementSystem.Areas.Users.Models.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedByEmail")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Budget");
 
                     b.Navigation("CreatedBy");
                 });

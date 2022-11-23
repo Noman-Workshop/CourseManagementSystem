@@ -3,6 +3,8 @@
 }
 
 <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css" rel="stylesheet"/>
+@* <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css"> *@
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
 
 <h1>Index</h1>
 
@@ -24,133 +26,28 @@
             </tr>
             </thead>
         </table>
-        <button class="btn btn-success" id="save-changes">Submit</button>
+        <div class="d-flex justify-content-evenly">
+            <button class="btn btn-success" id="save-changes">Submit</button>
+            <form action="/Budgets/ExportAsExcel" method="GET">
+                <button type="submit" class="btn btn-success">Export</button>
+            </form>
+            <!-- create a button to upload budgets as excel -->
+            <form action="/Budgets/UploadBudgets" method="POST" enctype="multipart/form-data">
+                <input type="file" name="budgets" id="budgets" accept=".xlsx, .xls, .csv">
+                <button type="submit" class="btn btn-success">Upload</button>
+            </form>
+        </div>
     </div>
 </div>
 
 @section scripts{
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jeditable.js/2.0.19/jquery.jeditable.min.js" integrity="sha512-Jn+modod+CgT0sdSdiL5Zr74JeTDTR2DGzeSRG1oUVnZjZFnkdSPOFUiwAr/St/lIvYEyBaZ6F46vJE4fbHg6A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <script>
-        function bindDatatable() {
-            $('#budgets-table')
-                .DataTable({
-                    sAjaxSource: "/Budgets/GetTableData",
-                    bServerSide: true,
-                    bProcessing: true,
-                    bPaginate: false,
-                    bSearchable: false,
-                    language: {
-                        emptyTable: "No record found.",
-                        processing:
-                            '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
-                    },
-                    columns: [
-                        {
-                            data: "name",
-                            autoWidth: true,
-                            order: 'asc'
-                        },
-                        {
-                            data: "currency",
-                            autoWidth: true,
-                        },
-                        {
-                            data: "amount",
-                            autoWidth: true,
-                        },
-                        {
-                            data: "startDate",
-                            autoWidth: true,
-                        },
-                        {
-                            data: "endDate",
-                            autoWidth: true,
-                        },
-                        {
-                            data: "department.name",
-                            autoWidth: true,
-                        },
-                    ],
-                    initComplete: calculateTotalBudget
-                });
-        }
-
-        let totalBudget = 0;
-        let updatedTotalBudget = 0;
-        let budgets = [];
-        function calculateTotalBudget() {
-            totalBudget = 0;
-            var table = $('#budgets-table').DataTable();
-            var data = table.rows().data();
-            for (var i = 0; i < data.length; i++) {
-                budgets.push(data[i].amount);
-                totalBudget += data[i].amount;
-            }
-            updatedTotalBudget = totalBudget;
-            // add total budget to the table
-            var totalBudgetRow = '<tr><td>Total Budget</td><td></td><td id="total_budget">' + totalBudget + '</td><td></td><td></td><td></td></tr>';
-            $('#budgets-table tbody').append(totalBudgetRow);
-        }
-
-        let budgetUpdates = {};
-        function onEditChanges(colIndex, value, budgetId) {
-            value = Number(value);
-            updatedTotalBudget -= budgets[colIndex];
-            budgetUpdates[budgetId] = {
-               id: budgetId,
-               amount: value,
-               timestamp: new Date()
-            };
-            updatedTotalBudget += value;
-            budgets[colIndex] = value;
-            $('#total_budget').text(updatedTotalBudget);
-            // make the submit button disabled if the updated total budget is more than the total budget
-            if (updatedTotalBudget > totalBudget) {
-                $('#save-changes').prop('disabled', true);
-            } else {
-                $('#save-changes').prop('disabled', false);
-            }
-            return value;
-        }
-
-        $(document).ready(function () {
-            bindDatatable();
-
-
-            $('#save-changes').click(function () {
-                console.log(budgetUpdates);
-                $.ajax({
-                    url: '/Budgets/Update',
-                    type: 'POST',
-                    data: JSON.stringify(Object.values(budgetUpdates)),
-                    contentType: 'application/json',
-                    success: function (result) {
-                        if (result.success) {
-                            alert('Budgets updated successfully');
-                        }
-                    }
-                });
-            });
-
-            // make the amount column editable
-            $('#budgets-table').on('click', 'td', function () {
-                let colIndex = $(this).index();
-                if (colIndex === 2 && $(this).attr('id') !== 'total_budget') {
-                    let budgetId = $(this).closest('tr').find('td:first').text();
-                    $(this).editable((value) => onEditChanges(colIndex, value, budgetId),
-                        {
-                            type: 'text',
-                            submit: `OK`,
-                            cancel: 'Cancel',
-                            placeholder: 'Enter new amount',
-                            tooltip: 'Click to edit...',
-                            style: 'display: inline'
-                        });
-                }
-            });
-        });
-    </script>
+    <script src="js/Areas/Budgets/editBudget.js" defer></script>
 }
