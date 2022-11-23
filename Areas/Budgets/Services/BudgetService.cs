@@ -104,7 +104,8 @@ public class BudgetService : IBudgetService {
 		await _budgetUnitOfWork.CommitAsync();
 	}
 
-	public async Task UploadBudgets(Stream stream) {
+	public async Task UploadBudgets(Stream stream, String userEmail) {
+		User user = await _userService.Find(userEmail);
 		// Convert the stream to excel workbook.
 		XLWorkbook workbook = new XLWorkbook(stream);
 		// Get the first worksheet.
@@ -136,6 +137,8 @@ public class BudgetService : IBudgetService {
 
 		// Create a new Budgets.
 		List<Budget> budgets = new List<Budget>();
+		// Create a list of BudgetAuditLogs.
+		List<BudgetAuditLog> budgetAuditLogs = new List<BudgetAuditLog>();
 		// create a hashtable to store the department name and department id.
 		Hashtable departments = new Hashtable();
 		foreach (DataRow row in table.Rows) {
@@ -146,16 +149,27 @@ public class BudgetService : IBudgetService {
 				departments.Add(departmentName, department);
 			}
 
-			budgets.Add(new Budget {
+			var budget = new Budget {
 				Name = row["Name"].ToString(),
 				Amount = decimal.Parse(row["Amount"].ToString()),
 				Department = departments[departmentName] as Department,
 				Currency = "taka"
-			});
+			};
+			budgets.Add(budget);
+
+			// add the budget audit log.
+			var budgetAuditLog = new BudgetAuditLog {
+				CreatedAt = DateTime.Now,
+				CreatedBy = user,
+				Budget = budget
+			};
+			budgetAuditLogs.Add(budgetAuditLog);
 		}
 
 		// Add the budgets to the database.
 		_budgetUnitOfWork.BudgetRepository.AddRange(budgets);
+		// Add the budget audit logs to the database.
+		_budgetUnitOfWork.BudgetAuditLogRepository.AddRange(budgetAuditLogs);
 		// Save the changes.
 		await _budgetUnitOfWork.CommitAsync();
 	}

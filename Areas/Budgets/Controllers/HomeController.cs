@@ -54,8 +54,10 @@ namespace CourseManagementSystem.Areas.Budgets.Controllers {
 				return BadRequest();
 			}
 
+			var user = User.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
+
 			var stream = budgets.OpenReadStream();
-			await _budgetService.UploadBudgets(stream);
+			await _budgetService.UploadBudgets(stream, user);
 			return View(nameof(Index));
 		}
 	}
