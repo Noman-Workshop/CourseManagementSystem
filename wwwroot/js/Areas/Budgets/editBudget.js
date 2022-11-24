@@ -11,12 +11,12 @@ const EditBudget = () => {
         await new Promise((res) => $.ajax({
             url: "/Budgets/GetTableData", type: "GET", dataType: "json", success: function ({aaData: data}) {
                 budgets = data.reduce((obj, item) => {
+                    item.editedAmount = item.finalAmount;
                     obj[item.id] = item;
                     return obj;
                 }, {});
                 totalBudget = data.reduce((acc, curr) => acc + curr.amount, 0);
-                updatedTotalBudget = totalBudget;
-                updatedBudgets = {...budgets};
+                updatedTotalBudget = data.reduce((acc, curr) => acc + curr.finalAmount, 0);
                 res();
             }
         }))
@@ -38,39 +38,45 @@ const EditBudget = () => {
                     data: "currency", autoWidth: true,
                 }, {
                     data: "amount", autoWidth: true,
-                    render: (value, _, data) => {
-                        return `<span id="${data.id}">${value}</span>`;
-                    }
                 }, {
                     data: "startDate", autoWidth: true,
                 }, {
                     data: "endDate", autoWidth: true,
                 }, {
                     data: "department.name", autoWidth: true,
-                },],
+                }, {
+                    data: "finalAmount", autoWidth: true,
+                    render: (value, _, data) => {
+                        return `<span id="${data.id}">${value}</span>`;
+                    }
+                }, {
+                    data: "finalAmount", autoWidth: true,
+                    render: (value, _, data) => {
+                        return `<span id="final_budget_${data.id}">${value}</span>`;
+                    }
+                }],
                 "initComplete": () => {
                     // add total budget to the table
-                    const totalBudgetRow = '<tr><td>Total Budget</td><td></td><td id="total_budget">' + totalBudget + '</td><td></td><td></td><td></td></tr>';
+                    const totalBudgetRow = `<tr><td>Total Budget</td><td></td><td id="total_projected_budget">${totalBudget}</td><td></td><td></td><td></td><td id="total_budget">${updatedTotalBudget}</td><td id="total_final_budget">${updatedTotalBudget}</td></tr>`;
                     $('#budgets-table tbody').append(totalBudgetRow);
                 }
             });
     }
 
     const onEditChanges = (budgetId, value) => {
-        console.log(budgetId, value, budgets[budgetId]);
         value = Number(value);
-        updatedTotalBudget -= updatedBudgets[budgetId].amount;
+        updatedTotalBudget -= budgets[budgetId].editedAmount;
         budgetUpdates[budgetId] = {
             id: budgetId, amount: value, timestamp: new Date()
         };
-        if (value === budgets[budgetId].amount) {
+        if (value === budgets[budgetId].finalAmount) {
             // remove the budget from the updated budgets
-            delete updatedBudgets[budgetId];
+            delete budgetUpdates[budgetId];
         }
-        console.log(updatedTotalBudget);
-        updatedBudgets[budgetId].amount = value;
         updatedTotalBudget += value;
+        $(`#final_budget_${budgetId}`).text(value);
         $('#total_budget').text(updatedTotalBudget);
+        $('#total_final_budget').text(updatedTotalBudget);
         // make the submit button disabled if the updated total budget is more than the total budget
         if (updatedTotalBudget > totalBudget) {
             $('#save-changes').prop('disabled', true);
@@ -91,7 +97,6 @@ const EditBudget = () => {
                 if (result.success) {
                     alert('Budgets updated successfully');
                 }
-                budgets = {...updatedBudgets};
                 totalBudget = updatedTotalBudget;
                 budgetUpdates = {};
             }
@@ -113,7 +118,7 @@ $(document).ready(function () {
         let colIndex = $(this).index();
         let budgetId = $(this)[0].children[0].id;
         console.log(colIndex, budgetId);
-        if (colIndex === 2 && budgetId !== 'total_budget') {
+        if (colIndex === 6 && budgetId !== 'total_budget') {
             $(this).editable((value) => onEditChanges(budgetId, value), {
                 type: 'text', placeholder: 'Enter new amount', tooltip: 'Click to edit...', style: 'display: inline'
             });

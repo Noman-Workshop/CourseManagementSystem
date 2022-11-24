@@ -55,7 +55,7 @@ public class BudgetService : IBudgetService {
 			table.Rows.Add(
 				budget.Id,
 				budget.Name,
-				budget.Amount,
+				budget.FinalAmount,
 				budget.Department.Name
 			);
 		}
@@ -90,7 +90,7 @@ public class BudgetService : IBudgetService {
 		User user = await _userService.Find(userEmail);
 		foreach (BudgetUpdateDto budgetUpdateDto in budgetUpdates) {
 			Budget budget = await Find(budgetUpdateDto.Id);
-			budget.Amount = budgetUpdateDto.Amount;
+			budget.FinalAmount = budgetUpdateDto.Amount;
 			var budgetAuditLog = new BudgetAuditLog {
 				CreatedAt = DateTime.Parse(budgetUpdateDto.Timestamp, null,
 					System.Globalization.DateTimeStyles.RoundtripKind),
@@ -155,6 +155,7 @@ public class BudgetService : IBudgetService {
 				Department = departments[departmentName] as Department,
 				Currency = "taka"
 			};
+			budget.FinalAmount = budget.Amount;
 			budgets.Add(budget);
 
 			// add the budget audit log.
