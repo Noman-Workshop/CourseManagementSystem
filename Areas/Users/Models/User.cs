@@ -14,5 +14,5 @@ public class User {
 	public string Password { get; set; }
 
 	[ValidateNever]
-	public virtual Role[] Roles { get; set; }
+	public virtual ICollection<Role> Roles { get; set; }
 }

@@ -13,27 +13,30 @@ class AuthService : IAuthService {
 		_userService = userService;
 	}
 
-	public async Task<bool> IsValid(LoginDto loginDto) {
+	public async Task<User?> IsValid(LoginDto loginDto) {
 		try {
-			User user = await _userService.Find(loginDto.UserEmail);
+			User user = (await _userService.Find(u => u.Email == loginDto.UserEmail, "Roles"))[0];
 			if (user.Password != loginDto.Password) {
-				return false;
+				return null;
 			}
 
-			return true;
+			return user;
 		} catch (Exception) {
-			return false;
+			return null;
 		}
 	}
 
 	public ClaimsPrincipal SignIn(LoginDto loginDto) {
-		if (!IsValid(loginDto).Result) {
+		User? user = IsValid(loginDto).Result;
+		if (user == null) {
 			throw new ArgumentException("Invalid credential");
 		}
 
 		var claims = new List<Claim> {
 			new(ClaimTypes.Email, loginDto.UserEmail),
 		};
+		string[] roles = user.Roles.Select(r => r.Name).ToArray();
+		claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
 		var identity = new ClaimsIdentity(claims, AuthTypes.UsernamePasswordCookies.ToString());
 		return new ClaimsPrincipal(identity);

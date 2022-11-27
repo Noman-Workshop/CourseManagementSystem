@@ -25,7 +25,8 @@ namespace CourseManagementSystem.Areas.Budgets.Controllers {
 		public async Task<IActionResult> GetTableData(JqueryDatatableParam param) {
 			var teachers = await _budgetService.Find(param);
 			var result = new {
-				aaData = teachers.data
+				aaData = teachers.data,
+				canEdit = User.IsInRole("Teacher")
 			};
 
 			return Json(result);

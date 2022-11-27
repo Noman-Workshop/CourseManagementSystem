@@ -5,10 +5,11 @@ const EditBudget = () => {
 
     let updatedTotalBudget;
     let budgetUpdates = {};
+    let canUpdateBudget = false;
 
     const getBudgets = async () => {
         await new Promise((res) => $.ajax({
-            url: "/Budgets/GetTableData", type: "GET", dataType: "json", success: function ({aaData: data}) {
+            url: "/Budgets/GetTableData", type: "GET", dataType: "json", success: function ({aaData: data, canEdit}) {
                 budgets = data.reduce((obj, item) => {
                     item.editedAmount = item.finalAmount;
                     obj[item.id] = item;
@@ -16,7 +17,8 @@ const EditBudget = () => {
                 }, {});
                 totalBudget = data.reduce((acc, curr) => acc + curr.amount, 0);
                 updatedTotalBudget = data.reduce((acc, curr) => acc + curr.finalAmount, 0);
-                res();
+                canUpdateBudget = canEdit;
+                res()
             }
         }))
     };
@@ -44,22 +46,35 @@ const EditBudget = () => {
                 }, {
                     data: "department.name", autoWidth: true,
                 }, {
-                    data: "finalAmount", autoWidth: true,
-                    render: (value, _, data) => {
+                    data: "finalAmount", autoWidth: true, render: (value, _, data) => {
                         return `<span id="${data.id}">${value}</span>`;
                     }
                 }, {
-                    data: "finalAmount", autoWidth: true,
-                    render: (value, _, data) => {
+
+                    data: "finalAmount", autoWidth: true, render: (value, _, data) => {
                         return `<span id="final_budget_${data.id}">${value}</span>`;
                     }
                 }],
                 "initComplete": () => {
-                    // add total budget to the table
-                    const totalBudgetRow = `<tr><td>Total Budget</td><td></td><td id="total_projected_budget">${totalBudget}</td><td></td><td></td><td></td><td id="total_budget">${updatedTotalBudget}</td><td id="total_final_budget">${updatedTotalBudget}</td></tr>`;
+                    let totalBudgetRow = `<tr><td>Total Budget</td><td></td><td id="total_projected_budget">${totalBudget}</td><td></td><td></td><td></td><td id="total_budget">${updatedTotalBudget}</td><td id="total_final_budget">${updatedTotalBudget}</td></tr>`;
+                    if (!canUpdateBudget) {
+                        totalBudgetRow = `<tr><td>Total Budget</td><td></td><td id="total_projected_budget">${totalBudget}</td><td></td><td></td><td></td><td id="total_final_budget">${updatedTotalBudget}</td></tr>`;
+                    }
                     $('#budgets-table tbody').append(totalBudgetRow);
                 }
             });
+        onDatatableLoad();
+    }
+
+    const onDatatableLoad = () => {
+        if (!canUpdateBudget) {
+            // hide the save changes button
+            $('#save-changes').hide();
+            // hide the amount column
+            $('#budgets-table').DataTable().column(6).visible(false);
+        }
+        $('#save-changes').click(submitBudgetChanges);
+        makeEditable();
     }
 
     const onEditChanges = (budgetId, value) => {
@@ -104,7 +119,7 @@ const EditBudget = () => {
     };
 
     const makeEditable = () => {
-        // make the amount column editable
+        if (!canUpdateBudget) return;
         $('#budgets-table').on('click', 'td', function () {
             let colIndex = $(this).index();
             let budgetId = $(this)[0].children[0].id;
@@ -125,14 +140,12 @@ const EditBudget = () => {
     }
 
     return {
-        bindDatatable, submitBudgetChanges, makeEditable
+        bindDatatable
     }
 }
 
 
 $(document).ready(function () {
-    const {bindDatatable, submitBudgetChanges, makeEditable} = EditBudget();
+    const {bindDatatable} = EditBudget();
     bindDatatable();
-    makeEditable();
-    $('#save-changes').click(submitBudgetChanges);
 });
