@@ -104,20 +104,20 @@ public class BudgetService : IBudgetService {
 		await _budgetUnitOfWork.CommitAsync();
 	}
 
-	public async Task UploadBudgets(Stream stream, String userEmail) {
+	public async Task UploadBudgets(Stream stream, string userEmail, DateTime? editDeadline) {
 		User user = await _userService.Find(userEmail);
 		// Convert the stream to excel workbook.
-		XLWorkbook workbook = new XLWorkbook(stream);
+		var workbook = new XLWorkbook(stream);
 		// Get the first worksheet.
 		IXLWorksheet worksheet = workbook.Worksheet(1);
 		// Create a new DataTable.
-		DataTable table = new DataTable("Budgets");
+		var table = new DataTable("Budgets");
 		// Add columns to the DataTable.
 		table.Columns.Add("Name", typeof(string));
 		table.Columns.Add("Amount", typeof(double));
 		table.Columns.Add("Department", typeof(string));
 		// Add rows to the DataTable.
-		bool firstRow = true;
+		var firstRow = true;
 		foreach (IXLRow row in worksheet.Rows()) {
 			if (firstRow) {
 				firstRow = false;
@@ -136,14 +136,14 @@ public class BudgetService : IBudgetService {
 		}
 
 		// Create a new Budgets.
-		List<Budget> budgets = new List<Budget>();
+		var budgets = new List<Budget>();
 		// Create a list of BudgetAuditLogs.
-		List<BudgetAuditLog> budgetAuditLogs = new List<BudgetAuditLog>();
+		var budgetAuditLogs = new List<BudgetAuditLog>();
 		// create a hashtable to store the department name and department id.
-		Hashtable departments = new Hashtable();
+		var departments = new Hashtable();
 		foreach (DataRow row in table.Rows) {
 			// Get the department name.
-			string departmentName = row["Department"].ToString();
+			var departmentName = row["Department"].ToString();
 			if (!departments.ContainsKey(departmentName)) {
 				Department department = (await _departmentService.Find(d => d.Name == departmentName, ""))[0];
 				departments.Add(departmentName, department);
@@ -153,7 +153,8 @@ public class BudgetService : IBudgetService {
 				Name = row["Name"].ToString(),
 				Amount = decimal.Parse(row["Amount"].ToString()),
 				Department = departments[departmentName] as Department,
-				Currency = "taka"
+				Currency = "taka",
+				EditDeadline = editDeadline
 			};
 			budget.FinalAmount = budget.Amount;
 			budgets.Add(budget);

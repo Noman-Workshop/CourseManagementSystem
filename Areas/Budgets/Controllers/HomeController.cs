@@ -47,17 +47,20 @@ namespace CourseManagementSystem.Areas.Budgets.Controllers {
 				"Budgets.xlsx");
 		}
 
+		public ViewResult Upload() => View();
+
 		[Route("Budgets/UploadBudgets")]
 		[HttpPost]
-		public async Task<IActionResult> UploadBudgets(IFormFile budgets) {
-			if (budgets.Length == 0) {
-				return BadRequest();
+		public async Task<IActionResult> UploadBudgets(BudgetUploadDto budgetUploadDto) {
+			// validate the model
+			if (!ModelState.IsValid) {
+				return View("Upload");
 			}
 
 			var user = User.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
 
-			var stream = budgets.OpenReadStream();
-			await _budgetService.UploadBudgets(stream, user);
+			var stream = budgetUploadDto.File.OpenReadStream();
+			await _budgetService.UploadBudgets(stream, user, budgetUploadDto.EditDeadline);
 			return View(nameof(Index));
 		}
 	}

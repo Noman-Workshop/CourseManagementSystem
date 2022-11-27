@@ -13,5 +13,5 @@ public interface IBudgetService : IService<Budget, string> {
 	public Task<MemoryStream> ExportAsExcel();
 
 	public Task Update(IEnumerable<BudgetUpdateDto> budgetUpdate, string userEmail);
-	Task UploadBudgets(Stream stream, String userEmail);
+	Task UploadBudgets(Stream stream, string userEmail, DateTime? editDeadline);
 }

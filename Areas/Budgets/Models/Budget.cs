@@ -33,4 +33,7 @@ public class Budget {
 
 	[ValidateNever]
 	public ICollection<BudgetAuditLog> AuditLogs { get; set; }
+
+	[Required]
+	public DateTime? EditDeadline { get; set; }
 }

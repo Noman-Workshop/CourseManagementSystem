@@ -4,7 +4,6 @@ const EditBudget = () => {
     let budgets;
 
     let updatedTotalBudget;
-    let updatedBudgets;
     let budgetUpdates = {};
 
     const getBudgets = async () => {
@@ -74,6 +73,7 @@ const EditBudget = () => {
             delete budgetUpdates[budgetId];
         }
         updatedTotalBudget += value;
+        budgets[budgetId].editedAmount = value;
         $(`#final_budget_${budgetId}`).text(value);
         $('#total_budget').text(updatedTotalBudget);
         $('#total_final_budget').text(updatedTotalBudget);
@@ -86,7 +86,7 @@ const EditBudget = () => {
         return value;
     };
 
-    let submitBudgetChanges = () => {
+    const submitBudgetChanges = () => {
         $.ajax({
             url: '/Budgets/Update',
             type: 'POST',
@@ -103,25 +103,36 @@ const EditBudget = () => {
         });
     };
 
+    const makeEditable = () => {
+        // make the amount column editable
+        $('#budgets-table').on('click', 'td', function () {
+            let colIndex = $(this).index();
+            let budgetId = $(this)[0].children[0].id;
+            console.log(colIndex, budgetId);
+            if (colIndex === 6 && budgetId !== 'total_budget') {
+                // get the edit deadline
+                let editDeadline = budgets[budgetId].editDeadline;
+                // parse the edit deadline from mssql format to js date format
+                editDeadline = new Date(editDeadline);
+                let today = new Date();
+                if (today > editDeadline) {
+                    return;
+                }
+                $(this).editable((value) => onEditChanges(budgetId, value));
+            }
+        });
+
+    }
+
     return {
-        bindDatatable, onEditChanges, submitBudgetChanges
+        bindDatatable, submitBudgetChanges, makeEditable
     }
 }
 
 
 $(document).ready(function () {
-    const {bindDatatable, onEditChanges, submitBudgetChanges} = EditBudget();
+    const {bindDatatable, submitBudgetChanges, makeEditable} = EditBudget();
     bindDatatable();
+    makeEditable();
     $('#save-changes').click(submitBudgetChanges);
-    // make the amount column editable
-    $('#budgets-table').on('click', 'td', function () {
-        let colIndex = $(this).index();
-        let budgetId = $(this)[0].children[0].id;
-        console.log(colIndex, budgetId);
-        if (colIndex === 6 && budgetId !== 'total_budget') {
-            $(this).editable((value) => onEditChanges(budgetId, value), {
-                type: 'text', placeholder: 'Enter new amount', tooltip: 'Click to edit...', style: 'display: inline'
-            });
-        }
-    });
 });
