@@ -12,6 +12,8 @@ using CourseManagementSystem.Areas.Teachers.Services;
 using CourseManagementSystem.Areas.Teachers.UnitOfWorks;
 using CourseManagementSystem.Areas.Users.Repository;
 using CourseManagementSystem.Areas.Users.Services;
+using CourseManagementSystem.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CourseManagementSystem.Extensions;
 

@@ -39,6 +39,7 @@ namespace CourseManagementSystem.Areas.Budgets.Controllers {
 			// get the current authenticated user
 			var user = User.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
 			await _budgetService.Update(budgetsUpdates, user);
+
 		}
 
 		[Route("Budgets/ExportAsExcel")]

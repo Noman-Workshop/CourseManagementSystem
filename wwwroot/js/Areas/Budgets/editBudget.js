@@ -55,6 +55,16 @@ const EditBudget = () => {
                         return `<span id="final_budget_${data.id}">${value}</span>`;
                     }
                 }],
+                columnDefs: [{
+                    targets: 8,
+                    render: function (_, type, data) {
+                        return `<button class="btn btn-info btn-sm" id="edit_${data.id}">
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                            Edit
+                                        </button>`;
+                    }
+                }],
                 "initComplete": () => {
                     let totalBudgetRow = `<tr><td>Total Budget</td><td></td><td id="total_projected_budget">${totalBudget}</td><td></td><td></td><td></td><td id="total_budget">${updatedTotalBudget}</td><td id="total_final_budget">${updatedTotalBudget}</td></tr>`;
                     if (!canUpdateBudget) {
@@ -67,6 +77,7 @@ const EditBudget = () => {
     }
 
     const onDatatableLoad = () => {
+        toastr.info('All data loaded')
         if (!canUpdateBudget) {
             // hide the save changes button
             $('#save-changes').hide();
@@ -74,7 +85,29 @@ const EditBudget = () => {
             $('#budgets-table').DataTable().column(6).visible(false);
         }
         $('#save-changes').click(submitBudgetChanges);
-        makeEditable();
+        // add event listener to edit button
+        $('#budgets-table tbody').on('click', 'button', function () {
+            let id = this.id.split('_')[1];
+            makeItemEditable(id);
+            // change the button to save button
+            $(this).html(`<i class="fas fa-save"></i> Save`);
+            $(this).removeClass('btn-info');
+            $(this).addClass('btn-success');
+            $(this).attr('id', `save_${id}`);
+            // add event listener to the save button
+            $(`#save_${id}`).on('click', function () {
+                let value = $(`#input_${id}`).val();
+                value = onEditChanges(id, value);
+                // change the button to edit button
+                $(this).html(`<i class="fas fa-pencil-alt"></i> Edit`);
+                $(this).removeClass('btn-success');
+                $(this).addClass('btn-info');
+                $(this).attr('id', `edit_${id}`);
+                // change the input field to a span
+                let span = $(`<span id="${id}">${value}</span>`);
+                $(`#input_${id}`).replaceWith(span);
+            });
+        });
     }
 
     const onEditChanges = (budgetId, value) => {
@@ -98,45 +131,60 @@ const EditBudget = () => {
         } else {
             $('#save-changes').prop('disabled', false);
         }
+        console.log('budgetUpdates', budgetUpdates);
+        toastr.info('Budget queued for update')
         return value;
     };
 
     const submitBudgetChanges = () => {
+        if (Object.keys(budgetUpdates).length === 0) {
+            toastr.info('No changes to save');
+            return;
+        }
+
         $.ajax({
             url: '/Budgets/Update',
             type: 'POST',
             data: JSON.stringify(Object.values(budgetUpdates)),
             contentType: 'application/json',
             dataType: 'json',
-            success: function (result) {
-                if (result.success) {
-                    alert('Budgets updated successfully');
+            complete: function (result) {
+                if (result.status !== 200) {
+                    toastr.error('Error updating budget');
+                    return;
                 }
                 totalBudget = updatedTotalBudget;
                 budgetUpdates = {};
+                toastr.success('Budgets updated successfully');
             }
         });
     };
 
-    const makeEditable = () => {
+    const makeItemEditable = (id) => {
+        console.log('makeItemEditable', id);
+        let editDeadline = budgets[id].editDeadline;
+        // parse the edit deadline from mssql format to js date format
+        editDeadline = new Date(editDeadline);
+        let today = new Date();
+        if (today > editDeadline) {
+            return;
+        }
+        // convert the column to an input field
+        let column = $(`#${id}`);
+        let input = $(`<input type="number" id="input_${id}" value="${column.text()}">`);
+        column.replaceWith(input);
+        // add event listener to the input field
+    }
+
+    const makeTableEditable = () => {
         if (!canUpdateBudget) return;
         $('#budgets-table').on('click', 'td', function () {
             let colIndex = $(this).index();
             let budgetId = $(this)[0].children[0].id;
-            console.log(colIndex, budgetId);
             if (colIndex === 6 && budgetId !== 'total_budget') {
-                // get the edit deadline
-                let editDeadline = budgets[budgetId].editDeadline;
-                // parse the edit deadline from mssql format to js date format
-                editDeadline = new Date(editDeadline);
-                let today = new Date();
-                if (today > editDeadline) {
-                    return;
-                }
-                $(this).editable((value) => onEditChanges(budgetId, value));
+                makeItemEditable(budgetId);
             }
         });
-
     }
 
     return {
