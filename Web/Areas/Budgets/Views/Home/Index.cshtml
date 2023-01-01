@@ -1,0 +1,54 @@
+@{
+    ViewData["Title"] = "Index";
+}
+
+<link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css" rel="stylesheet"/>
+@* <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css"> *@
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table table-bordered table-striped" id="budgets-table">
+            <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Currency</th>
+                <th scope="col">Projected Amount</th>
+                <th scope="col">StartDate</th>
+                <th scope="col">EndDate</th>
+                <th scope="col">Department</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Final Amount</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+        </table>
+        <div class="d-flex justify-content-evenly">
+            <button class="btn btn-success" id="save-changes">Submit</button>
+            <form action="/Budgets/ExportAsExcel" method="GET">
+                <button type="submit" class="btn btn-success">Export</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jeditable.js/2.0.19/jquery.jeditable.min.js" integrity="sha512-Jn+modod+CgT0sdSdiL5Zr74JeTDTR2DGzeSRG1oUVnZjZFnkdSPOFUiwAr/St/lIvYEyBaZ6F46vJE4fbHg6A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script src="~/js/Areas/Budgets/editBudget.js" defer></script>
+}
