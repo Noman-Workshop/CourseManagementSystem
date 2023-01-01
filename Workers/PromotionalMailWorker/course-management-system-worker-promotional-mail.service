@@ -1,0 +1,11 @@
+[Unit]
+Description=Course Management System Worker - Promotional Email
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+WorkingDirectory=/home/noman1001/Samples/CourseManagementSystem/Workers/PromotionalMailWorker/bin/Release/net6.0/linux-x64/publish/
+ExecStart=/home/noman1001/Samples/CourseManagementSystem/Workers/PromotionalMailWorker/bin/Release/net6.0/linux-x64/publish/PromotionalMailWorker
