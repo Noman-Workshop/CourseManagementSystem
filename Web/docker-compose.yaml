@@ -26,6 +26,7 @@ services:
       - db
 
   db:
+    container_name: 'course-management-system-web-db'
     build:
       context: .
       dockerfile: docker/db/Dockerfile
@@ -38,3 +39,4 @@ services:
 
 volumes:
   mssql-data:
+    name: 'coursemanagementsystem_mssql-data'
