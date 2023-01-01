@@ -1,9 +1,9 @@
 using System.Security.Claims;
-using CourseManagementSystem.Areas.Budgets.Dto;
-using CourseManagementSystem.Areas.Budgets.Services;
-using CourseManagementSystem.Models.Table;
+using CourseManagementSystem.ViewTables;
+using DTOs.Budgets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Services.Budgets.Services;
 
 namespace CourseManagementSystem.Areas.Budgets.Controllers {
 	[Authorize]

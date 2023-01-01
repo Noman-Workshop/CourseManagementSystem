@@ -1,5 +1,5 @@
-using CourseManagementSystem.Areas.Auth.Models;
-using CourseManagementSystem.Areas.Auth.Services;
+using Models;
+using Services.Auth.Services;
 
 namespace CourseManagementSystem.Extensions;
 

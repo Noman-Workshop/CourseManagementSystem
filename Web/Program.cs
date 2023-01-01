@@ -1,4 +1,5 @@
 using CourseManagementSystem.Extensions;
+using Services.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

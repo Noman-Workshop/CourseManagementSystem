@@ -1,9 +1,8 @@
-using CourseManagementSystem.Areas.Departments.Models;
 using CourseManagementSystem.Areas.Departments.Services;
-using CourseManagementSystem.Areas.Teachers.Models;
-using CourseManagementSystem.Areas.Teachers.Services;
-using CourseManagementSystem.Models.Table;
+using CourseManagementSystem.ViewTables;
 using Microsoft.AspNetCore.Mvc;
+using Models;
+using Services.Teachers.Services;
 
 namespace CourseManagementSystem.Areas.Departments.Controllers;
 

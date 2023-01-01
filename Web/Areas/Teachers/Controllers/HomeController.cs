@@ -1,10 +1,9 @@
-using CourseManagementSystem.Areas.Addresses.Models;
-using CourseManagementSystem.Areas.Teachers.Models;
-using CourseManagementSystem.Areas.Teachers.Services;
-using CourseManagementSystem.Models.Table;
+using CourseManagementSystem.ViewTables;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Models;
+using Services.Teachers.Services;
 
 namespace CourseManagementSystem.Areas.Teachers.Controllers;
 

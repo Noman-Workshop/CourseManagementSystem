@@ -25,14 +25,14 @@
 
     <ItemGroup>
         <Folder Include="Areas\Addresses\Controllers" />
-        <Folder Include="Areas\Addresses\Data" />
         <Folder Include="Areas\Admin\Controllers" />
-        <Folder Include="Areas\Admin\Data" />
         <Folder Include="Areas\Admin\Views" />
-        <Folder Include="Areas\Courses\Data" />
+        <Folder Include="Areas\Auth" />
         <Folder Include="Areas\Courses\Views\Shared" />
         <Folder Include="Areas\Departments\Controllers" />
         <Folder Include="Areas\Teachers\Controllers" />
+        <Folder Include="Areas\Users" />
+        <Folder Include="Models" />
     </ItemGroup>
 
     <ItemGroup>
@@ -43,6 +43,11 @@
       <_ContentIncludedByDefault Remove="Models\obj\Models.csproj.nuget.dgspec.json" />
       <_ContentIncludedByDefault Remove="Models\obj\project.assets.json" />
       <_ContentIncludedByDefault Remove="Models\obj\project.packagespec.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Models\Models.csproj" />
+      <ProjectReference Include="..\Services\Services.csproj" />
     </ItemGroup>
 
 </Project>

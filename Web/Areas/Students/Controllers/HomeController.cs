@@ -1,8 +1,7 @@
-using CourseManagementSystem.Areas.Addresses.Models;
-using CourseManagementSystem.Areas.Students.Models;
-using CourseManagementSystem.Areas.Students.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Models;
+using Services.Students.Services;
 
 namespace CourseManagementSystem.Areas.Students.Controllers;
 

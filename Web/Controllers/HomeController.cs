@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using CourseManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
+using Models;
 
 namespace CourseManagementSystem.Controllers;
 

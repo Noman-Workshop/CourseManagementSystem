@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Addresses" />
+      <Folder Include="Budgets" />
+      <Folder Include="Departments" />
+      <Folder Include="Students" />
+      <Folder Include="Teachers" />
+      <Folder Include="Users" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ClosedXML" Version="0.97.0" />
+        <PackageReference Include="MailKit" Version="3.4.3" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\DTOs\DTOs.csproj" />
+      <ProjectReference Include="..\Models\Models.csproj" />
+    </ItemGroup>
+
+</Project>

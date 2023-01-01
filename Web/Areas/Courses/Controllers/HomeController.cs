@@ -1,7 +1,7 @@
-﻿using CourseManagementSystem.Areas.Courses.Models;
-using CourseManagementSystem.Data;
+﻿using CourseManagementSystem.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Models;
 
 namespace CourseManagementSystem.Areas.Courses.Controllers;
 

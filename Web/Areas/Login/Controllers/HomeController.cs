@@ -1,8 +1,8 @@
-using CourseManagementSystem.Areas.Auth.Models;
-using CourseManagementSystem.Areas.Auth.Services;
-using CourseManagementSystem.Areas.Login.Dto;
+using DTOs.Login;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Models;
+using Services.Auth.Services;
 
 namespace CourseManagementSystem.Areas.Login.Controllers {
 	[Area("Login")]
@@ -24,7 +24,7 @@ namespace CourseManagementSystem.Areas.Login.Controllers {
 			}
 
 			try {
-				var principal = _authService.SignIn(loginDto);
+				var principal = _authService.SignIn(loginDto.UserEmail, loginDto.Password);
 				await HttpContext.SignInAsync(AuthTypes.UsernamePasswordCookies.ToString(), principal);
 				return RedirectToAction("Index", "Home", new { area = "Teachers" });
 			} catch (ArgumentException) {
