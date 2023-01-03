@@ -27,7 +27,6 @@
         <Folder Include="Areas\Addresses\Controllers" />
         <Folder Include="Areas\Admin\Controllers" />
         <Folder Include="Areas\Admin\Views" />
-        <Folder Include="Areas\Auth" />
         <Folder Include="Areas\Courses\Views\Shared" />
         <Folder Include="Areas\Departments\Controllers" />
         <Folder Include="Areas\Teachers\Controllers" />

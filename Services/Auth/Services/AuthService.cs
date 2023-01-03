@@ -1,11 +1,12 @@
 using System.Security.Claims;
+using DTOs.Login;
 using Models;
 using Services.Users.Services;
 
 namespace Services.Auth.Services;
 
 public class AuthService : IAuthService {
-	private IUserService _userService;
+	private readonly IUserService _userService;
 
 	public AuthService(IUserService userService) {
 		_userService = userService;
@@ -24,14 +25,14 @@ public class AuthService : IAuthService {
 		}
 	}
 
-	public ClaimsPrincipal SignIn(string email, string password) {
-		User? user = IsValid(email, password).Result;
+	public ClaimsPrincipal SignIn(LoginDto loginDto) {
+		User? user = IsValid(loginDto.UserEmail, loginDto.Password).Result;
 		if (user == null) {
 			throw new ArgumentException("Invalid credential");
 		}
 
 		var claims = new List<Claim> {
-			new(ClaimTypes.Email, email),
+			new(ClaimTypes.Email, loginDto.UserEmail),
 		};
 		string[] roles = user.Roles.Select(r => r.Name).ToArray();
 		claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));

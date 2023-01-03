@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Services.Budgets.Repositories;
 
 namespace CourseManagementSystem.Areas.Budgets.Repositories;
 

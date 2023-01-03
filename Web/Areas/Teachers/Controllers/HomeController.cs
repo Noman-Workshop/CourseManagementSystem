@@ -3,11 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Models.Constants;
 using Services.Teachers.Services;
 
 namespace CourseManagementSystem.Areas.Teachers.Controllers;
 
-[Authorize]
+[Authorize(Policy = Policies.TEACHER)]
 [Area("Teachers")]
 public class HomeController : Controller {
 	private readonly ITeacherService _teacherService;

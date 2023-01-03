@@ -1,6 +1,7 @@
 using CourseManagementSystem.Areas.Budgets.Repositories;
 using CourseManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
+using Services.Budgets.Repositories;
 
 namespace CourseManagementSystem.Areas.Budgets.UnitOfWorks;
 

@@ -4,6 +4,7 @@ using CourseManagementSystem.Areas.Departments.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Services.Addresses.Repository;
+using Services.Budgets.Repositories;
 using Services.Budgets.Services;
 using Services.Departments.Repositories;
 using Services.Students.Repositories;

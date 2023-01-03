@@ -7,6 +7,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbService(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddAuthServices(builder.Configuration);
+builder.Services.AddAuthPolicies(builder.Configuration);
 
 WebApplication app = builder.Build();
 
