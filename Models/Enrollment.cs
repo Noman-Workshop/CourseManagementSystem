@@ -1,25 +1,18 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Models;
+namespace Models
+{
+    public partial class Enrollment
+    {
+        public Guid Id { get; set; }
+        public Guid StudentId { get; set; }
+        public Guid ClassId { get; set; }
+        public decimal? Grade { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
-public class Enrollment {
-	[Key]
-	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-	[ValidateNever]
-	public string Id { get; set; }
-
-	[Key]
-	public string StudentId { get; set; }
-
-	public virtual Student Student { get; set; }
-
-	[Key]
-	public string CourseId { get; set; }
-
-	public virtual Course Course { get; set; }
-
-	[DisplayFormat(NullDisplayText = "No grade")]
-	public Grade? Grade { get; set; }
+        public virtual Class Class { get; set; } = null!;
+        public virtual Student Student { get; set; } = null!;
+    }
 }

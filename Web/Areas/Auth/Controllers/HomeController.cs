@@ -2,6 +2,7 @@ using DTOs.Login;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Models.Constants;
 using Services.Auth.Services;
 
 namespace CourseManagementSystem.Areas.Auth.Controllers;
@@ -27,7 +28,7 @@ public class HomeController : Controller {
 		try {
 			var principal = _authService.SignIn(loginDto);
 			await HttpContext.SignInAsync(AuthTypes.UsernamePasswordCookies.ToString(), principal);
-			return RedirectToAction("Index", "Home", new { area = "Teachers" });
+			return RedirectToAction("Index", "Home");
 		} catch (ArgumentException) {
 			ModelState.AddModelError("UserEmail", "Invalid user email");
 			ModelState.AddModelError("Password", "Invalid password");

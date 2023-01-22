@@ -1,15 +1,20 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Models;
+namespace Models
+{
+    public partial class Role
+    {
+        public Role()
+        {
+            UserRoles = new HashSet<UserRole>();
+        }
 
-public class Role {
-	[Key]
-	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-	public string Id { get; set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; } = null!;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
-	[StringLength(50, MinimumLength = 3)]
-	public string Name { get; set; }
-
-	public ICollection<User> Users { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; }
+    }
 }

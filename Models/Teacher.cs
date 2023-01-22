@@ -1,24 +1,24 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Models;
+namespace Models
+{
+    public partial class Teacher
+    {
+        public Teacher()
+        {
+            ClassTeachers = new HashSet<ClassTeacher>();
+            DepartmentHeads = new HashSet<DepartmentHead>();
+        }
 
-public class Teacher {
-	[Key]
-	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-	[ValidateNever]
-	public string Id { get; set; }
+        public Guid Id { get; set; }
+        public Guid DepartmentId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
-	[StringLength(50, MinimumLength = 3)]
-	public string Name { get; set; }
-
-	[EmailAddress]
-	public string Email { get; set; }
-
-	[ValidateNever]
-	public virtual Address Address { get; set; }
-
-	[ValidateNever]
-	public virtual ICollection<Course> Courses { get; set; }
+        public virtual Department Department { get; set; } = null!;
+        public virtual Employee IdNavigation { get; set; } = null!;
+        public virtual ICollection<ClassTeacher> ClassTeachers { get; set; }
+        public virtual ICollection<DepartmentHead> DepartmentHeads { get; set; }
+    }
 }

@@ -8,11 +8,6 @@
 
     <ItemGroup>
       <Folder Include="Addresses" />
-      <Folder Include="Budgets" />
-      <Folder Include="Departments" />
-      <Folder Include="Students" />
-      <Folder Include="Teachers" />
-      <Folder Include="Users" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,5 +1,5 @@
-using CourseManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
+using Models;
 
 namespace PromotionalMailWorker.Extensions;
 
