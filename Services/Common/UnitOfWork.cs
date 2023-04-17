@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseManagementSystem.Data;
+namespace Services.Common;
 
 public class UnitOfWork : IUnitOfWork {
 	private readonly DbContext _context;
@@ -9,7 +9,11 @@ public class UnitOfWork : IUnitOfWork {
 		_context = context;
 	}
 
-	public async void Dispose() => await _context.DisposeAsync();
+	public async void Dispose() {
+		await _context.DisposeAsync();
+	}
 
-	public Task CommitAsync() => _context.SaveChangesAsync();
+	public Task CommitAsync() {
+		return _context.SaveChangesAsync();
+	}
 }

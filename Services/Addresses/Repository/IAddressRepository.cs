@@ -1,6 +1,6 @@
-using CourseManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Services.Common;
 
 namespace Services.Addresses.Repository;
 

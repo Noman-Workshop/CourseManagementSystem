@@ -12,3 +12,15 @@ alter table employees
 
 insert into [migrations] ([version])
 values ('1674243557_employee_joining');
+
+-- write the revert migration
+-- delete from [migrations]
+-- where [version] = '1674243557_employee_joining';
+
+-- revert the changes
+-- alter table employees
+--     drop constraint employees_join_date_not_null;
+--
+-- alter table employees
+--     drop column join_date;
+

@@ -10,6 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="12.0.1" />
         <PackageReference Include="ClosedXML" Version="0.97.0" />
         <PackageReference Include="MailKit" Version="3.4.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
@@ -19,6 +20,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.2" />
         <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10" />
     </ItemGroup>
@@ -133,11 +135,19 @@
       <_ContentIncludedByDefault Remove="Areas\Teachers\Views\Home\Index.cshtml" />
       <_ContentIncludedByDefault Remove="Areas\Teachers\Views\_ViewImports.cshtml" />
       <_ContentIncludedByDefault Remove="Areas\Teachers\Views\_ViewStart.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Leaves\Pages\Home\LeaveRequest.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Models\Models.csproj" />
       <ProjectReference Include="..\Services\Services.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Areas\Calendar\Views\Home\Index.cshtml" />
+      <AdditionalFiles Include="Areas\Calendar\Views\_Logout.cshtml" />
+      <AdditionalFiles Include="Areas\Calendar\Views\_ViewImports.cshtml" />
+      <AdditionalFiles Include="Areas\Calendar\Views\_ViewStart.cshtml" />
     </ItemGroup>
 
 </Project>

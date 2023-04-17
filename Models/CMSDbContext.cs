@@ -29,6 +29,7 @@ namespace Models
         public virtual DbSet<EmployeeAttendance> EmployeeAttendances { get; set; } = null!;
         public virtual DbSet<EmployeeLevel> EmployeeLevels { get; set; } = null!;
         public virtual DbSet<Enrollment> Enrollments { get; set; } = null!;
+        public virtual DbSet<LeaveCarriedRemaining> LeaveCarriedRemainings { get; set; } = null!;
         public virtual DbSet<LeaveRequest> LeaveRequests { get; set; } = null!;
         public virtual DbSet<LeaveRequestReview> LeaveRequestReviews { get; set; } = null!;
         public virtual DbSet<LeaveType> LeaveTypes { get; set; } = null!;
@@ -537,6 +538,47 @@ namespace Models
                     .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_enrollments_student_id");
+            });
+
+            modelBuilder.Entity<LeaveCarriedRemaining>(entity =>
+            {
+                entity.HasKey(e => new { e.EmployeeId, e.LeaveTypeShortName })
+                    .HasName("pk_leave_carried_remaining");
+
+                entity.ToTable("leave_carried_remaining");
+
+                entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
+
+                entity.Property(e => e.LeaveTypeShortName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("leave_type_short_name");
+
+                entity.Property(e => e.CarriedOver).HasColumnName("carried_over");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.LastAddedDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("last_added_date");
+
+                entity.Property(e => e.LastAddedDays).HasColumnName("last_added_days");
+
+                entity.Property(e => e.RemainingDays).HasColumnName("remaining_days");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany(p => p.LeaveCarriedRemainings)
+                    .HasForeignKey(d => d.EmployeeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_leave_carried_remaining_employee_id");
             });
 
             modelBuilder.Entity<LeaveRequest>(entity =>

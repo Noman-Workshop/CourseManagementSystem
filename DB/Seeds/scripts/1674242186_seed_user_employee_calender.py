@@ -13,10 +13,10 @@ def seed_users(n, cursor):
         last_name = fake.last_name()
         # email is a combination of first and last name and first 5 digits of guid
         email = f"{first_name.lower()}.{last_name.lower()}.{_id[:5]}@cms.edu"
-        # password is the last 5 digits of guid
-        password = _id[-5:]
+        # password is the last 8 digits of guid
+        password = _id[-8:]
         # hash the password
-        hashed_password = hashlib.sha512(password.encode('utf-8') + _id.encode('utf-8')).hexdigest()
+        hashed_password = hashlib.sha512(password.encode()).hexdigest()
         gender = fake.random_element(elements=GENDERS)
         created_at = fake.date_time_between(start_date='-10y', end_date='now')
         updated_at = fake.date_time_between(start_date=created_at, end_date='now')

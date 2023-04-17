@@ -1,0 +1,191 @@
+﻿@model DTOs.Leaves.LeaveRequestDto
+
+@{
+    ViewData["Title"] = "Leave Request";
+}
+
+<div class="kt-portlet">
+    <div class="kt-portlet__head">
+        <div class="kt-portlet__head-label">
+            <h3 class="kt-portlet__head-title">
+                Leave Request
+            </h3>
+        </div>
+    </div>
+
+    <!--begin::Form-->
+    <form class="kt-form kt-form--label-right" id="kt_form_2" asp-action="Create" method="POST" enctype="multipart/form-data">
+        <div class="kt-portlet__body">
+            <div class="form-group row">
+                <div class="col-lg-2">
+                    <label class="control-label">Employee Code</label>
+                    <input type="text" class="form-control" value="@Model.EmployeeCode" asp-for="EmployeeCode" disabled="disabled"/>
+                    <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+                </div>
+                <div class="col-lg-4">
+                    <label class="control-label">Employee Name</label>
+                    <input type="text" class="form-control" value="@Model.EmployeeName" asp-for="EmployeeName" disabled="disabled"/>
+                    <span asp-validation-for="EmployeeName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-2 required-field">
+                    <label class="control-label">Leave Type</label>
+                    <select class="form-control select2" asp-for="LeaveTypeId" asp-items="@(new SelectList(Model.LeaveTypes, "Id", "Name"))">
+                        <option value="">Select Leave Type</option>
+                    </select>
+                    <span asp-validation-for="LeaveTypeId" class="text-danger"></span>
+                </div>
+                <div class="col-lg-2">
+                    <label class="control-label">Remaining Days</label>
+                    <input type="text" id="remaining-days" class="form-control" value="0" disabled="disabled"/>
+                </div>
+                <div class="col-lg-2">
+                    <label class="control-label">Already Taken</label>
+                    <input type="text" id="already-taken" class="form-control" value="0" disabled="disabled"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-4 required-field">
+                    <label>Date Range</label>
+                    <div class="input-group date">
+                        <input type="text" class="form-control" asp-for="ProposedDateRange"/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">
+                                <i class="la la-calendar-check-o"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <span asp-validation-for="ProposedDateRange" class="text-danger"></span>
+                </div>
+                <div class="col-lg-2">
+                    <label class="control-label">No Of Days</label>
+                    <input type="text" class="form-control" value="0" asp-for="ProposedDays" disabled="disabled"/>
+                    <span asp-validation-for="ProposedDays" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-6 required-field">
+                    <label class="control-label">Purpose</label>
+                    <textarea class="form-control h-100" asp-for="Purpose"></textarea>
+                    <span asp-validation-for="Purpose" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-6 required-field">
+                    <label class="control-label">Address</label>
+                    <textarea class="form-control h-100" asp-for="Address"></textarea>
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+            </div>
+            <!-- leave attachment -->
+            <div class="row">
+                <div class="col-lg-3">
+                    <label class="col-form-label">Attachment</label>
+                    <div class="custom-file">
+                        <label class="custom-file-label" asp-for="Attachment">Choose file</label>
+                        <input type="file" class="custom-file-input" asp-for="Attachment">
+                        <span asp-validation-for="Attachment"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="kt-portlet__foot">
+            <div class="kt-form__actions">
+                <div class="row">
+                    <button type="submit" id="btnSave" class="btn btn-brand">Request</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function getDaysInfo(leaveTypeId) {
+            let daysInfo;
+            $.ajax({
+                url: "/Leaves/Home/GetDaysInfo/",
+                type: "GET",
+                async: false,
+                data: { leaveTypeId: leaveTypeId },
+                success: function (data) {
+                    daysInfo = data;
+                }
+            });
+            return daysInfo;
+        }
+
+        function calculateNoOfDays(leaveTypeId, startDate, endDate) {
+            let noOfDays;
+            $.ajax({
+                url: "/Leaves/Home/CalculateDays/",
+                type: "GET",
+                async: false,
+                data: { leaveTypeId: leaveTypeId, startDate: startDate, endDate: endDate },
+                success: function (data) {
+                    noOfDays = data;
+                }
+            });
+            return noOfDays;
+        }
+
+        function onLeaveTypeChange() {
+            // on change of leave type
+            $("#LeaveTypeId").change(function () {
+                const leaveTypeId = $(this).val();
+                if (leaveTypeId === "") {
+                    return;
+                }
+                const daysInfo = getDaysInfo(leaveTypeId);
+                $("#remaining-days").val(daysInfo.remainingDays);
+                $("#already-taken").val(daysInfo.totalTakenDays);
+                $("#ProposedDateRange").daterangepicker({
+                    locale: {
+                        cancelLabel: 'Clear'
+                    },
+                    // ToKnow: limit to current year only
+                    minDate: moment().startOf('year'),
+                    maxDate: moment().endOf('year')
+                });
+            });
+        }
+
+        function onDateRangeChange() {
+            // on change of date range
+            $("#ProposedDateRange").change(function () {
+                const leaveTypeId = $("#LeaveTypeId").val();
+                if (leaveTypeId === "") {
+                    return;
+                }
+                const startDate = $(this).val().split(" - ")[0];
+
+                const endDate = $(this).val().split(" - ")[1];
+                const noOfDays = calculateNoOfDays(leaveTypeId, startDate, endDate);
+                const $ProposedDays = $("#ProposedDays");
+                $ProposedDays.val(noOfDays);
+                const daysInfo = getDaysInfo(leaveTypeId);
+                if(noOfDays > daysInfo.remainingDays) {
+                    // change the border of no of days to red
+                    $ProposedDays.css("border-color", "red");
+                    $("#btnSave").prop("disabled", true);
+                } else {
+                    $ProposedDays.css("border-color", "");
+                    $("#btnSave").prop("disabled", false);
+                }
+            });
+        }
+
+        function onChangeTriggers() {
+            onLeaveTypeChange();
+            onDateRangeChange();
+        }
+
+        function onLoad() {
+            onChangeTriggers();
+        }
+
+        window.onload = onLoad;
+    </script>
+}

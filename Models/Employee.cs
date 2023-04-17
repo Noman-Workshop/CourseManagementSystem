@@ -8,6 +8,7 @@ namespace Models
         public Employee()
         {
             InverseSupervisor = new HashSet<Employee>();
+            LeaveCarriedRemainings = new HashSet<LeaveCarriedRemaining>();
             LeaveRequestReviewRelievers = new HashSet<LeaveRequestReview>();
             LeaveRequestReviewReviewers = new HashSet<LeaveRequestReview>();
             LeaveRequests = new HashSet<LeaveRequest>();
@@ -25,6 +26,7 @@ namespace Models
         public virtual Employee? Supervisor { get; set; }
         public virtual Teacher? Teacher { get; set; }
         public virtual ICollection<Employee> InverseSupervisor { get; set; }
+        public virtual ICollection<LeaveCarriedRemaining> LeaveCarriedRemainings { get; set; }
         public virtual ICollection<LeaveRequestReview> LeaveRequestReviewRelievers { get; set; }
         public virtual ICollection<LeaveRequestReview> LeaveRequestReviewReviewers { get; set; }
         public virtual ICollection<LeaveRequest> LeaveRequests { get; set; }

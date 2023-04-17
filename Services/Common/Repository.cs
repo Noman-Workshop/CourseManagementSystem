@@ -1,7 +1,9 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Models;
 
-namespace CourseManagementSystem.Data;
+namespace Services.Common;
 
 public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntity : class {
 	private readonly DbContext _context;
@@ -10,9 +12,13 @@ public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey> whe
 		_context = context;
 	}
 
-	public Task<List<TEntity>> Find() => _context.Set<TEntity>().ToListAsync();
+	public Task<List<TEntity>> Find() {
+		return _context.Set<TEntity>().ToListAsync();
+	}
 
-	public ValueTask<TEntity?> Find(TKey id) => _context.Set<TEntity>().FindAsync(id);
+	public ValueTask<TEntity> Find(TKey id) {
+		return _context.Set<TEntity>().FindAsync(id);
+	}
 
 	public Task<List<TEntity>> Find(Expression<Func<TEntity, bool>> condition, string? includeAttributes) {
 		IQueryable<TEntity> query = _context.Set<TEntity>();
@@ -27,6 +33,15 @@ public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey> whe
 		return query.Where(condition).ToListAsync();
 	}
 
+	public Task<List<TEntity>> Find(
+		Expression<Func<TEntity, bool>> condition,
+		Expression<Func<TEntity, object>> includeAttributes
+	) {
+		IQueryable<TEntity> query = _context.Set<TEntity>();
+		query = query.Include(includeAttributes);
+		return query.Where(condition).ToListAsync();
+	}
+
 	// find all entities with paging
 	public async Task<TEntity> FindFirst(Expression<Func<TEntity, bool>> condition, string? includeAttributes = null) {
 		List<TEntity> entities = await Find(condition, includeAttributes);
@@ -37,13 +52,24 @@ public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey> whe
 		return entities[0];
 	}
 
-	public void Add(TEntity entity) => _context.Set<TEntity>().AddAsync(entity);
+	public async ValueTask<TEntity> Add(TEntity entity) {
+		var entityEntry = await _context.Set<TEntity>().AddAsync(entity);
+		return entityEntry.Entity;
+	}
 
-	public void AddRange(IEnumerable<TEntity> entities) => _context.Set<TEntity>().AddRangeAsync(entities);
+	public void AddRange(IEnumerable<TEntity> entities) {
+		_context.Set<TEntity>().AddRangeAsync(entities);
+	}
 
-	public void Update(TEntity entity) => _context.Set<TEntity>().Update(entity);
+	public void Update(TEntity entity) {
+		_context.Set<TEntity>().Update(entity);
+	}
 
-	public void Remove(TEntity entity) => _context.Set<TEntity>().Remove(entity);
+	public void Remove(TEntity entity) {
+		_context.Set<TEntity>().Remove(entity);
+	}
 
-	public async Task CommitAsync() => await _context.SaveChangesAsync();
+	public async Task CommitAsync() {
+		await _context.SaveChangesAsync();
+	}
 }

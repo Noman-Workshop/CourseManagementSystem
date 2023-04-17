@@ -1,0 +1,115 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Calendar View</h1>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js'></script>
+
+<hr/>
+<div id='calendar'></div>
+
+<!-- create a modal that opens when a date is selected on calender -->
+<div class="modal fade" id="addEventModal" tabindex="-1" role="dialog" aria-labelledby="addEventModalForm" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Change Day Type</h5>
+            </div>
+            <form asp-action="AddEvent">
+                <div class="modal-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label for="day-type-id" class="control-label">Day Type</label>
+                        <select id="day-type-id" name="day-type" class="form-control">
+                            <option value="workday">Work Day</option>
+                            <option value="weekend">Weekend</option>
+                            <option value="government_holiday">Government Holiday</option>
+                            <option value="company_holiday">Company Holiday</option>
+                            <option value="other_holiday">Other Holiday</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input id="date-id" hidden="hidden" name="date" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Change</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        showCalendar();
+    });
+
+    function getDayColor(dayType) {
+        switch (dayType) {
+            case 'workday':
+                return '#c7f9cc';
+            case 'weekend':
+                return '#22577a';
+            case 'government_holiday':
+                return '#f4a261';
+            case 'company_holiday':
+                return '#e9c46a';
+            case 'other_holiday':
+                return '#e76f51';
+        }
+    }
+
+    async function loadCalendar(month, year) {
+        let calendarDays;
+        await (new Promise((resolve, reject) => {
+            $.ajax(
+                {
+                    url: '@Url.Action("GetDayTypeRange", "Home")',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        start: year + '-' + (month + 1) + '-' + 1,
+                        end: year + '-' + (month + 2) + '-' + 1
+                    },
+                    success: function (response) {
+                        calendarDays = response.data;
+                        calendarDays.forEach((day) => {
+                            day.start = day.day;
+                            day.allDay = true;
+                            day.backgroundColor = getDayColor(day.type)
+                            day.display = 'background'
+                        });
+                        resolve();
+                    },
+                    error: function () {
+                        reject();
+                    }
+                }
+            );
+        }));
+
+        return calendarDays;
+    }
+
+    async function showCalendar() {
+        var calendarEl = document.getElementById('calendar');
+        var calendarEvents = await loadCalendar(new Date().getMonth(), new Date().getFullYear());
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          selectable: true,
+          initialView: 'dayGridMonth',
+          select(e) {
+            $('#date-id').val(e.startStr);
+            $('#addEventModal').modal('show');
+          },
+          events: calendarEvents
+        });
+        calendar.render();
+    }
+</script>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("~/Views/Shared/_ValidationScriptsPartial.cshtml"); }
+}

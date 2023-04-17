@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Models;
 using Models.Constants;
-using Services.Auth.Services;
+using Services.Auth;
 using Role = Models.Constants.Role;
 
 namespace CourseManagementSystem.Extensions;
@@ -15,14 +15,18 @@ public static class AuthExtension {
 				options => {
 					options.LoginPath = "/Auth";
 					options.Cookie.Name = AuthTypes.UsernamePasswordCookies.ToString();
+					options.ExpireTimeSpan = new TimeSpan(3, 0, 0);
 				});
 	}
 
 	public static void AddAuthPolicies(this IServiceCollection services, IConfiguration configuration) {
 		services.AddAuthorization(options => {
-			options.AddPolicy(Policy.ADMIN, policy => policy.RequireClaim(ClaimTypes.Role, Role.ADMIN.ToString()));
-			options.AddPolicy(Policy.TEACHER, policy => policy.RequireClaim(ClaimTypes.Role, Role.TEACHER.ToString()));
-			options.AddPolicy(Policy.STUDENT, policy => policy.RequireClaim(ClaimTypes.Role, Role.STUDENT.ToString()));
-		});
+									options.AddPolicy(Policy.ADMIN,
+										policy => policy.RequireClaim(ClaimTypes.Role, Role.ADMIN.ToString()));
+									options.AddPolicy(Policy.TEACHER,
+										policy => policy.RequireClaim(ClaimTypes.Role, Role.TEACHER.ToString()));
+									options.AddPolicy(Policy.STUDENT,
+										policy => policy.RequireClaim(ClaimTypes.Role, Role.STUDENT.ToString()));
+								});
 	}
 }

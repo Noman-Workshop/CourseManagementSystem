@@ -1,0 +1,71 @@
+version: '3.7'
+
+# a mssql-2019 database with a predefined volume
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    ports:
+      - 1433:1433
+    volumes:
+      - coursemanagementsystem_mssql-data:/var/opt/mssql
+    networks:
+      - course-management-system
+
+  # a redis cache with a predefined volume
+  cache:
+    image: redis:7.0.7
+    ports:
+      - 6379:6379
+    volumes:
+      - course-management-system-cache-backup:/data
+    networks:
+      - course-management-system
+
+  # a minio server
+  storage:
+    image: minio/minio
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    volumes:
+      - storage:/data
+    command: server --console-address ":9001" /data
+    networks:
+      - course-management-system
+
+  # minio/mc to automate the creation of the bucket
+  storage-setup:
+    image: minio/mc
+    depends_on:
+      - storage
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    entrypoint: >
+      /bin/sh -c "
+        mc config host add cms-storage http://storage:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+        buckets=('leave-attachments')
+        for bucket in $${buckets[@]}; do
+          mc mb cms-storage/$$bucket;
+        done;
+        exit 0;
+      "
+    networks:
+      - course-management-system
+
+networks:
+  course-management-system:
+    name: course-management-system-network
+
+volumes:
+  course-management-system-cache-backup:
+    external: true
+  coursemanagementsystem_mssql-data:
+    external: true
+  storage:

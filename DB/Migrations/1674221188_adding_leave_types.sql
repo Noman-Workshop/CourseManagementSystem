@@ -15,7 +15,7 @@ insert into leave_types(short_name, full_name, [description], gender_constraint,
                         review_forward_depth, no_of_days_allocated_per_year)
 values ('EL', 'Earned Leave', 'Earned Leave', 'all', 100, 1000, 45, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 15),
        ('EL', 'Earned Leave', 'Earned Leave for employees from rank E-5 and 2 years service', 'all', 100, 1000, 60, 1,
-        1, 0, 1, 0, 0, 1, 1, 1, 1, 0,
+        1, 0, 1, 0, 0, 1, 1, 1, 1, 730,
         70, 1, 1, 20),
        ('CL', 'Casual Leave', 'Casual Leave', 'all', 3, 1000, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 10),
        ('SL', 'Sick Leave', 'Sick Leave', 'all', 14, 1000, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 14),
