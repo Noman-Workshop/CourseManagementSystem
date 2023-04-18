@@ -13,7 +13,9 @@ public class CalendarService : ICalendarService {
 	}
 
 	public async Task SetCalenderDayType(DateTime date, string type) {
-		_calenderRepository.Update(new Models.Calender { Day = date, Type = type, UpdatedAt = DateTime.Now });
+		var calenderDay = await _calenderRepository.FindFirst(calender => calender.Day == date, "");
+		calenderDay.Type = type;
+		_calenderRepository.Update(calenderDay);
 		await _calenderRepository.CommitAsync();
 	}
 }

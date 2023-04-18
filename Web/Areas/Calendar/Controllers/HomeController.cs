@@ -21,7 +21,7 @@ public class HomeController : Controller {
 	}
 
 	[HttpPost]
-	public async Task AddEvent([FromForm] DateTime date, [FromForm(Name = "day-type")] string type) {
+	public async Task ChangeDayType([FromForm] DateTime date, [FromForm] string type) {
 		await _calendarService.SetCalenderDayType(date, type);
 	}
 
